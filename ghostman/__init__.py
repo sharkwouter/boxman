@@ -1,0 +1,1 @@
+from ghostman.config import Config
