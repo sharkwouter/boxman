@@ -31,8 +31,8 @@ def main():
     for repository in config.repositories:
         print(repository.database_url)
         db_file = f"{repository.name}.db"
-        if os.path.isfile(db_file):
-            result = urllib.request.urlretrieve(repository.database_url, db_file, reporthook=progress)
+        if not os.path.isfile(db_file):
+            urllib.request.urlretrieve(repository.database_url, db_file, reporthook=progress)
         else:
             print(os.path.getmtime(db_file))
         if not tarfile.is_tarfile(db_file):
