@@ -3,7 +3,7 @@ import os
 import tarfile
 import urllib.request
 
-from ghostman import Config
+from boxman import Config
 
 
 def get_base_directory():
@@ -25,8 +25,7 @@ def progress(chunk_number, chunk_max_size, download_size):
 
 def main():
     base_directory = get_base_directory()
-    application_name = get_application_name()
-    config = Config(base_directory, application_name)
+    config = Config(base_directory)
     print(config.options.root_dir)
     for repository in config.repositories:
         print(repository.database_url)
