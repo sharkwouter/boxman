@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import mock_open, patch, MagicMock
 
-from boxman import Config
+from boxman.config import Config
 
 
 class TestConfig(TestCase):
