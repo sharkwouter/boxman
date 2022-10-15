@@ -52,32 +52,32 @@ class TestDownload(TestCase):
             reporthook=print_download_progress,
         )
 
-    @patch("boxman.download.print")
+    @patch("builtins.print")
     def test_print_download_progress(self, mock_print: MagicMock):
         print_download_progress(0, 1000, 10)
-        self.assertRegexpMatches(
+        self.assertRegex(
             mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
         )
 
         print_download_progress(0, 10, 100)
-        self.assertRegexpMatches(
+        self.assertRegex(
             mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
         )
 
         print_download_progress(1, 10, 100)
-        self.assertRegexpMatches(
+        self.assertRegex(
             mock_print.call_args_list[mock_print.call_count - 1].args[0],
             r"(.* |^)10%.*",
         )
 
         print_download_progress(5, 10, 100)
-        self.assertRegexpMatches(
+        self.assertRegex(
             mock_print.call_args_list[mock_print.call_count - 1].args[0],
             r"(.* |^)50%.*",
         )
 
         print_download_progress(1, 1000, 10)
-        self.assertRegexpMatches(
+        self.assertRegex(
             mock_print.call_args_list[mock_print.call_count - 1].args[0],
             r"(.* |^)100%.*",
         )
