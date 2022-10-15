@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch, MagicMock
 
-from boxman.download import download, print_download_progress
+from boxman.download import download, calculate_progress, print_download_progress
 
 
 class TestDownload(TestCase):
@@ -52,32 +52,14 @@ class TestDownload(TestCase):
             reporthook=print_download_progress,
         )
 
-    @patch("builtins.print")
-    def test_print_download_progress(self, mock_print: MagicMock):
-        print_download_progress(0, 1000, 10)
-        self.assertRegex(
-            mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
-        )
-
-        print_download_progress(0, 10, 100)
-        self.assertRegex(
-            mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
-        )
-
-        print_download_progress(1, 10, 100)
-        self.assertRegex(
-            mock_print.call_args_list[mock_print.call_count - 1].args[0],
-            r"(.* |^)10%.*",
-        )
-
-        print_download_progress(5, 10, 100)
-        self.assertRegex(
-            mock_print.call_args_list[mock_print.call_count - 1].args[0],
-            r"(.* |^)50%.*",
-        )
-
-        print_download_progress(1, 1000, 10)
-        self.assertRegex(
-            mock_print.call_args_list[mock_print.call_count - 1].args[0],
-            r"(.* |^)100%.*",
-        )
+    def test_calculate_progress(self):
+        self.assertEqual(0, calculate_progress(0, 1000, 10))
+        self.assertEqual(0, calculate_progress(0, 10, 100))
+        self.assertEqual(10, calculate_progress(1, 10, 100))
+        self.assertEqual(50, calculate_progress(5, 10, 100))
+        self.assertEqual(100, calculate_progress(10, 10, 100))
+        self.assertEqual(100, calculate_progress(11, 10, 100))
+        self.assertEqual(100, calculate_progress(1, 1000, 10))
+        self.assertEqual(0, calculate_progress(0, 1000, 10))
+        self.assertEqual(0, calculate_progress(0, 1000, 10))
+        self.assertEqual(0, calculate_progress(0, 1000, 10))
