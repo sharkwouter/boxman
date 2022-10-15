@@ -1,7 +1,9 @@
-
 name: Test
-
-on: [push, pull_request]
+on:
+  push:
+    paths: ['boxman/**','test/**','.flake8','requirements.txt', '.github/workflows/test.yml']
+  pull_request:
+    paths: ['boxman/**','test/**','.flake8','requirements.txt', '.github/workflows/test.yml']
 
 jobs:
   test:
