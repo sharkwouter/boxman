@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 import os
+import sys
 import tarfile
 import urllib.request
 
-from boxman import Config
-
 
 def get_base_directory():
-    return os.path.dirname(os.path.dirname(__file__))
+    base_directory = os.path.dirname(os.path.dirname(__file__))
+    sys.path.insert(0, base_directory)
+    os.chdir(base_directory)
+    return base_directory
 
 
 def get_application_name():
@@ -25,24 +27,30 @@ def progress(chunk_number, chunk_max_size, download_size):
 
 def main():
     base_directory = get_base_directory()
+
+    from boxman import Config
+    from boxman.argparser import get_parsed_arguments
+
     config = Config(base_directory)
-    print(config.options.root_dir)
-    for repository in config.repositories:
-        print(repository.database_url)
-        db_file = f"{repository.name}.db"
-        if not os.path.isfile(db_file):
-            urllib.request.urlretrieve(repository.database_url, db_file, reporthook=progress)
-        else:
-            print(os.path.getmtime(db_file))
-        if not tarfile.is_tarfile(db_file):
-            print("WTF!")
-        with tarfile.open(db_file) as t:
-            for member in t.getmembers():
-                print(member.name)
-                if "desc" in member.name:
-                    output = t.extractfile(member)
-                    print(output.read().decode('utf-8'))
-                    t.close()
+    parsed_arguments = get_parsed_arguments()
+    print(parsed_arguments)
+    # print(config.options.root_dir)
+    # for repository in config.repositories:
+    #     print(repository.database_url)
+    #     db_file = f"{repository.name}.db"
+    #     if not os.path.isfile(db_file):
+    #         urllib.request.urlretrieve(repository.database_url, db_file, reporthook=progress)
+    #     else:
+    #         print(os.path.getmtime(db_file))
+    #     if not tarfile.is_tarfile(db_file):
+    #         print("WTF!")
+    #     with tarfile.open(db_file) as t:
+    #         for member in t.getmembers():
+    #             print(member.name)
+    #             if "desc" in member.name:
+    #                 output = t.extractfile(member)
+    #                 print(output.read().decode('utf-8'))
+    #                 t.close()
 
 
 if __name__ == "__main__":

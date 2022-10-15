@@ -22,17 +22,20 @@ class Config:
 
     def __set_options_defaults(self):
         root_dir = self.base_directory
-        cache_dir = os.path.join(self.base_directory, "var", "cache", APPLICATION_NAME, "pkg")
-        db_path = os.path.join(self.base_directory, "var", "lib", APPLICATION_NAME)
-        self.options = Options(
-            root_dir=root_dir,
-            cache_dir=cache_dir,
-            db_path=db_path
+        cache_dir = os.path.join(
+            self.base_directory, "var", "cache", APPLICATION_NAME, "pkg"
         )
+        db_path = os.path.join(self.base_directory, "var", "lib", APPLICATION_NAME)
+        self.options = Options(root_dir=root_dir, cache_dir=cache_dir, db_path=db_path)
 
     def __parse_config(self):
-        parser = ConfigParser(allow_no_value=True, comment_prefixes=['#'], )
-        parser.read(os.path.join(self.base_directory, "etc", f"{APPLICATION_NAME}.conf"))
+        parser = ConfigParser(
+            allow_no_value=True,
+            comment_prefixes=["#"],
+        )
+        parser.read(
+            os.path.join(self.base_directory, "etc", f"{APPLICATION_NAME}.conf")
+        )
 
         for section in parser.sections():
             if section == "options":
@@ -43,11 +46,17 @@ class Config:
     def __parse_config_options(self, options_section: SectionProxy):
         for key in options_section.keys():
             if key == "rootdir":
-                self.options.root_dir = self.get_relative_path(options_section.get("rootdir"))
+                self.options.root_dir = self.get_relative_path(
+                    options_section.get("rootdir")
+                )
             elif key == "cachedir":
-                self.options.cache_dir = self.get_relative_path(options_section.get("cachedir"))
+                self.options.cache_dir = self.get_relative_path(
+                    options_section.get("cachedir")
+                )
             elif key == "dbpath":
-                self.options.db_path = self.get_relative_path(options_section.get("dbpath"))
+                self.options.db_path = self.get_relative_path(
+                    options_section.get("dbpath")
+                )
 
     def __parse_config_repository(self, section: SectionProxy):
         self.repositories.append(Repository(section.name, section.get("Server")))
@@ -75,4 +84,3 @@ class Config:
     @property
     def base_directory(self) -> str:
         return self.__base_directory
-

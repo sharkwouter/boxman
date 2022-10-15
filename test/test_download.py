@@ -47,22 +47,37 @@ class TestDownload(TestCase):
         download("http://example.com/", "/some/directory/test.tar.gz", True)
 
         mock_urlretrieve.assert_called_once_with(
-            "http://example.com/", "/some/directory/test.tar.gz", reporthook=print_download_progress
+            "http://example.com/",
+            "/some/directory/test.tar.gz",
+            reporthook=print_download_progress,
         )
 
     @patch("boxman.download.print")
     def test_print_download_progress(self, mock_print: MagicMock):
         print_download_progress(0, 1000, 10)
-        self.assertRegexpMatches(mock_print.call_args_list[mock_print.call_count-1].args[0], r"(.* |^)0%.*")
+        self.assertRegexpMatches(
+            mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
+        )
 
         print_download_progress(0, 10, 100)
-        self.assertRegexpMatches(mock_print.call_args_list[mock_print.call_count-1].args[0], r"(.* |^)0%.*")
+        self.assertRegexpMatches(
+            mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)0%.*"
+        )
 
         print_download_progress(1, 10, 100)
-        self.assertRegexpMatches(mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)10%.*")
+        self.assertRegexpMatches(
+            mock_print.call_args_list[mock_print.call_count - 1].args[0],
+            r"(.* |^)10%.*",
+        )
 
         print_download_progress(5, 10, 100)
-        self.assertRegexpMatches(mock_print.call_args_list[mock_print.call_count - 1].args[0], r"(.* |^)50%.*")
+        self.assertRegexpMatches(
+            mock_print.call_args_list[mock_print.call_count - 1].args[0],
+            r"(.* |^)50%.*",
+        )
 
         print_download_progress(1, 1000, 10)
-        self.assertRegexpMatches(mock_print.call_args_list[mock_print.call_count-1].args[0], r"(.* |^)100%.*")
+        self.assertRegexpMatches(
+            mock_print.call_args_list[mock_print.call_count - 1].args[0],
+            r"(.* |^)100%.*",
+        )

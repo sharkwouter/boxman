@@ -1,0 +1,5 @@
+[flake8]
+max-complexity = 6
+exclude = .git,__pycache__,.eggs,*.egg,build,dist, venv
+ignore = E501
+require-plugins = flake8-black

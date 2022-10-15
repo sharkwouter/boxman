@@ -1,6 +1,7 @@
 *.pyc
 *.swap
 .DS_Store
+.coverage
 
 __pycache__/
 build/
