@@ -63,3 +63,4 @@ class TestDownload(TestCase):
         self.assertEqual(0, calculate_progress(0, 1000, 10))
         self.assertEqual(0, calculate_progress(0, 1000, 10))
         self.assertEqual(0, calculate_progress(0, 1000, 10))
+        self.assertEqual(0, calculate_progress(51, 1000, None))
