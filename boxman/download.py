@@ -2,16 +2,16 @@ import os
 import urllib.request
 
 
-def print_download_progress(chunk_number, chunk_max_size, download_size):
+def print_download_progress(chunk_number, chunk_max_size, download_size) -> None:
     if download_size:
         if chunk_max_size > download_size:
-            percentage = chunk_number
+            percentage = chunk_number * 100
         else:
-            percentage = chunk_max_size / download_size * chunk_number
-        print(f"{percentage:4.0%} done")
+            percentage = int(chunk_max_size / download_size * chunk_number * 100)
+        print(f"{percentage}% done")
 
 
-def download(url: str, target_path: str, report_progress=False):
+def download(url: str, target_path: str, report_progress=False) -> None:
     download_directory = os.path.dirname(target_path)
     if not os.path.isdir(download_directory):
         os.makedirs(download_directory)
