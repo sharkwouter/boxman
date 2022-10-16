@@ -12,28 +12,16 @@ def get_base_directory():
     return base_directory
 
 
-def get_application_name():
-    return os.path.basename(__file__)
-
-
-def progress(chunk_number, chunk_max_size, download_size):
-    if download_size:
-        if chunk_max_size > download_size:
-            percentage = chunk_number
-        else:
-            percentage = chunk_max_size / download_size * chunk_number
-        print(f"{percentage:4.0%} done")
-
-
 def main():
     base_directory = get_base_directory()
 
-    from boxman.config import Config
-    from boxman.args_parser import parse_args
+    from boxman import Boxman, Config, parse_args
 
     config = Config(base_directory)
     parsed_arguments = parse_args()
     print(parsed_arguments)
+    boxman = Boxman(config)
+    boxman.run(parsed_arguments)
     # print(config.options.root_dir)
     # for repository in config.repositories:
     #     print(repository.database_url)

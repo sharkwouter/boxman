@@ -8,12 +8,12 @@ Boxman supports the following commands:
 
 ```bash
 boxman install package1 package2  # Install packages
-boxman list  # Print a list of available packages
-boxman search package  # Search for packages with a specific string in their name
-boxman installed  # Print a list of installed packages
-boxman remove package1 package2  # Remove packages
-boxman show package  # Print information about a package
 boxman update  # Update all installed packages or add package names to update specific ones
+boxman remove package1 package2  # Remove packages
+boxman search package  # Search for packages with a specific string in their name
+boxman show package  # Print information about a package
+boxman list  # Print a list of available packages
+boxman installed  # Print a list of installed packages
 ```
 
 **None of these commands have been fully implemented yet!**
