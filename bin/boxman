@@ -28,11 +28,11 @@ def progress(chunk_number, chunk_max_size, download_size):
 def main():
     base_directory = get_base_directory()
 
-    from boxman import Config
-    from boxman.argparser import get_parsed_arguments
+    from boxman.config import Config
+    from boxman.args_parser import parse_args
 
     config = Config(base_directory)
-    parsed_arguments = get_parsed_arguments()
+    parsed_arguments = parse_args()
     print(parsed_arguments)
     # print(config.options.root_dir)
     # for repository in config.repositories:
