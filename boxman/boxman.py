@@ -9,7 +9,7 @@ class Boxman:
     def __init__(self, config: Config):
         self.config = config
 
-    def run(self, args: ParsedArguments) -> None:
+    def run(self, args: ParsedArguments) -> None:  # noqa: C901
         if args.mode == Mode.INSTALL:
             self.__run_install(args.arguments)
         elif args.mode == Mode.UPDATE:
