@@ -1,0 +1,14 @@
+## Boxman example configuration
+## Save as etc/boxman.conf
+
+## The options below are are actually the defaults and are not required to be added
+## They can be modified, though
+[options]
+# root = /
+# DBPath = var/lib/boxman
+# CacheDir = var/cache/boxman/pkg
+
+## Here an example of a repository
+## The .db file is expected to be in https://example.com/repo/my-repo.db in this case
+# [my-repo]
+# Server = https://example.com/repo
