@@ -1,30 +1,23 @@
 #!/usr/bin/env python3
+# This file is only for testing! It is not used in the actual package
+
 import os
 import sys
 
+
 # import tarfile
 # import urllib.request
-
-
-def get_base_directory():
+def main():
+    # get base directory
     base_directory = os.path.dirname(os.path.dirname(__file__))
     sys.path.insert(0, base_directory)
     os.chdir(base_directory)
-    return base_directory
 
+    # import boxman
+    from boxman import run
 
-def main():
-    base_directory = get_base_directory()
-
-    from boxman.args_parser import parse_args
-    from boxman.config import Config
-    from boxman.boxman import Boxman
-
-    config = Config(base_directory)
-    parsed_arguments = parse_args()
-
-    boxman = Boxman(config)
-    boxman.run(parsed_arguments)
+    # start boxman
+    run()
     # print(config.options.root_dir)
     # for repository in config.repositories:
     #     print(repository.database_url)

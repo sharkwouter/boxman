@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boxman"
+version = "0.0.1"
+description = "A portable package manager compatible with pacman repositories"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = []
+
+[project.scripts]
+boxman = "boxman:run"
+
+[tool.setuptools.packages.find]
+exclude = ["test"]
+
