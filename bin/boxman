@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import os
 import sys
-import tarfile
-import urllib.request
+
+# import tarfile
+# import urllib.request
 
 
 def get_base_directory():
@@ -15,11 +16,13 @@ def get_base_directory():
 def main():
     base_directory = get_base_directory()
 
-    from boxman import Boxman, Config, parse_args
+    from boxman.args_parser import parse_args
+    from boxman.config import Config
+    from boxman.boxman import Boxman
 
     config = Config(base_directory)
     parsed_arguments = parse_args()
-    print(parsed_arguments)
+
     boxman = Boxman(config)
     boxman.run(parsed_arguments)
     # print(config.options.root_dir)

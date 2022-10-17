@@ -1,7 +1,7 @@
 from typing import List
 
-from boxman import Config
-from boxman import ParsedArguments
+from boxman.config import Config
+from boxman.args_parser import ParsedArguments
 from boxman.data.mode import Mode
 
 
