@@ -33,9 +33,13 @@ class Config:
             allow_no_value=True,
             comment_prefixes=["#"],
         )
-        parser.read(
-            os.path.join(self.base_directory, "etc", f"{APPLICATION_NAME}.conf")
+        config_file = os.path.join(
+            self.base_directory, "etc", f"{APPLICATION_NAME}.conf"
         )
+        if os.path.isfile(config_file):
+            parser.read(config_file)
+        else:
+            sys.exit(f"Configuration file {config_file} not found")
 
         for section in parser.sections():
             if section == "options":

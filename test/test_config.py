@@ -5,7 +5,9 @@ from boxman.config import Config
 
 
 class TestConfig(TestCase):
-    def test_init(self):
+    @patch("os.path.isfile")
+    def test_init(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
         data = (
             "[options]\n"
             "RootDir = /psp\n"
@@ -34,7 +36,9 @@ class TestConfig(TestCase):
         self.assertEqual("some_other_repo", config.repositories[1].name)
         self.assertEqual("https://some/repo", config.repositories[1].server)
 
-    def test_init2(self):
+    @patch("os.path.isfile")
+    def test_init2(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
         data = (
             "[options]\n"
             "RootDir = psp\n"
@@ -59,7 +63,9 @@ class TestConfig(TestCase):
             config.repositories[0].server,
         )
 
-    def test_init_defaults(self):
+    @patch("os.path.isfile")
+    def test_init_defaults(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
         with patch("builtins.open", mock_open(read_data="")):
             config = Config("/base/dir")
 
@@ -69,7 +75,9 @@ class TestConfig(TestCase):
         self.assertEqual("/base/dir", config.options.root_dir)
         self.assertEqual(0, len(config.repositories))
 
-    def test_get_relative_path(self):
+    @patch("os.path.isfile")
+    def test_get_relative_path(self, mock_isfile: MagicMock):
+        mock_isfile.return_value = True
         with patch("builtins.open", mock_open(read_data="")):
             config = Config("/base/dir")
 
@@ -82,7 +90,11 @@ class TestConfig(TestCase):
 
     @patch("sys.platform", new="win32")
     @patch("os.path.join")
-    def test_get_relative_path_windows(self, mock_join: MagicMock):
+    @patch("os.path.isfile")
+    def test_get_relative_path_windows(
+        self, mock_isfile: MagicMock, mock_join: MagicMock
+    ):
+        mock_isfile.return_value = True
         with patch("builtins.open", mock_open(read_data="")):
             config = Config("C:\\root")
 
@@ -103,3 +115,14 @@ class TestConfig(TestCase):
 
         config.get_relative_path("..\\..\\..\\root")
         mock_join.assert_called_with("C:\\root", "root")
+
+    @patch("sys.exit")
+    @patch("os.path.isfile")
+    def test_init_config_does_not_exist(
+        self, mock_isfile: MagicMock, mock_exit: MagicMock
+    ):
+        mock_isfile.return_value = False
+        Config("/base/dir")
+        mock_exit.assert_called_once_with(
+            "Configuration file /base/dir/etc/boxman.conf not found"
+        )
