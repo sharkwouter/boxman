@@ -3,11 +3,13 @@ from typing import List
 from boxman.config import Config
 from boxman.args_parser import ParsedArguments
 from boxman.data.mode import Mode
+from boxman.database_manager import DatabaseManager
 
 
 class Boxman:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, database_manager: DatabaseManager):
         self.config = config
+        self.database_manager = database_manager
 
     def run(self, args: ParsedArguments) -> None:  # noqa: C901
         if args.mode == Mode.INSTALL:
