@@ -39,13 +39,18 @@ class Boxman:
         pass
 
     def __run_search(self, string: str) -> None:
-        pass
+        packages = self.database_manager.get_packages()
+        for package in packages:
+            if string in package.split(" ")[0]:
+                print(package)
 
     def __run_show(self, package: str) -> None:
         pass
 
     def __run_list(self) -> None:
-        pass
+        packages = self.database_manager.get_packages()
+        for package in packages:
+            print(package)
 
     def __run_installed(self) -> None:
         pass

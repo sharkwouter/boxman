@@ -1,3 +1,4 @@
+import os
 import tarfile
 from typing import List, Optional
 
@@ -16,6 +17,20 @@ def get_files_in_archive(archive: str) -> List[str]:
     with tarfile.open(archive) as t:
         for member in t.getmembers():
             files.append(member.name)
+    return files
+
+
+def get_packages_in_database_archive(archive: str) -> List[str]:
+    if not tarfile.is_tarfile(archive):
+        raise Exception(f"{archive} is not a valid tar archive")
+    files = []
+    with tarfile.open(archive) as t:
+        for member in t.getmembers():
+            if member.isdir():
+                package_name, package_version, package_rel = os.path.basename(
+                    member.name
+                ).rsplit("-", 2)
+                files.append(f"{package_name} {package_version}-{package_rel}")
     return files
 
 

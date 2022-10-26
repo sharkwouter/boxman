@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # This file is only for testing! It is not used in the actual package
-
+import logging
 import os
 import sys
 
 
-# import tarfile
-# import urllib.request
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     # get base directory
     base_directory = os.path.dirname(os.path.dirname(__file__))
     sys.path.insert(0, base_directory)
@@ -18,23 +17,6 @@ def main():
 
     # start boxman
     run()
-    # print(config.options.root_dir)
-    # for repository in config.repositories:
-    #     print(repository.database_url)
-    #     db_file = f"{repository.name}.db"
-    #     if not os.path.isfile(db_file):
-    #         urllib.request.urlretrieve(repository.database_url, db_file, reporthook=progress)
-    #     else:
-    #         print(os.path.getmtime(db_file))
-    #     if not tarfile.is_tarfile(db_file):
-    #         print("WTF!")
-    #     with tarfile.open(db_file) as t:
-    #         for member in t.getmembers():
-    #             print(member.name)
-    #             if "desc" in member.name:
-    #                 output = t.extractfile(member)
-    #                 print(output.read().decode('utf-8'))
-    #                 t.close()
 
 
 if __name__ == "__main__":
