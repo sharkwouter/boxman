@@ -17,10 +17,11 @@ def download_database(func: Callable):
                 download_directory = os.path.dirname(database_file)
                 if not os.path.isdir(download_directory):
                     os.makedirs(download_directory)
+                print(f"Downloading database {repository.name}")
                 self._download_database()
             else:
                 mtime = os.path.getmtime(database_file)
-                minutes_since_last_edit = (time.time() - mtime) / 60
+                minutes_since_last_edit = int((time.time() - mtime) / 60)
                 if minutes_since_last_edit >= self.refresh_after:
                     print(
                         f"Redownloading database {repository.name}, time expired was {minutes_since_last_edit}"
