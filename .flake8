@@ -1,5 +1,5 @@
 [flake8]
 max-complexity = 6
 exclude = .git,__pycache__,.eggs,*.egg,build,dist, venv
-ignore = E501
+ignore = E501,W503
 per-file-ignores = __init__.py: F401

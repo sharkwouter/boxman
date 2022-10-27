@@ -5,8 +5,8 @@ from configparser import ConfigParser, SectionProxy
 from typing import List
 
 from boxman.constants import APPLICATION_NAME
-from boxman.data.config.options import Options
-from boxman.data.config.repository import Repository
+from boxman.data.options import Options
+from boxman.repository import Repository
 
 
 class Config:
@@ -63,7 +63,9 @@ class Config:
                 )
 
     def __parse_config_repository(self, section: SectionProxy):
-        self.repositories.append(Repository(section.name, section.get("Server")))
+        self.repositories.append(
+            Repository(section.name, section.get("Server"), self.options.db_path)
+        )
 
     def get_relative_path(self, path: str):
         """

@@ -38,17 +38,16 @@ class Boxman:
     def __run_remove(self, packages: List[str]) -> None:
         pass
 
-    def __run_search(self, string: str) -> None:
-        packages = self.database_manager.get_packages()
+    def __run_search(self, search_string: str) -> None:
+        packages = self.database_manager.search_packages(search_string)
         for package in packages:
-            if string in package.split(" ")[0]:
-                print(package)
+            print(package)
 
     def __run_show(self, package: str) -> None:
         pass
 
     def __run_list(self) -> None:
-        packages = self.database_manager.get_packages()
+        packages = self.database_manager.get_package_list()
         for package in packages:
             print(package)
 

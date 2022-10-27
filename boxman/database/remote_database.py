@@ -1,2 +1,0 @@
-class RemoteDatabase:
-    pass

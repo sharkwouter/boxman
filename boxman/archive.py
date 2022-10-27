@@ -7,7 +7,9 @@ def extract(archive: str, destination: str) -> None:
     if not tarfile.is_tarfile(archive):
         raise Exception(f"{archive} is not a valid tar archive")
     with tarfile.open(archive) as t:
-        t.extractall(destination)
+        for member in t.getmembers():
+            print(member.path)
+        # t.extractall(destination)
 
 
 def get_files_in_archive(archive: str) -> List[str]:

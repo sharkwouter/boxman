@@ -30,11 +30,13 @@ class TestConfig(TestCase):
 
         self.assertEqual("minigalaxy", config.repositories[0].name)
         self.assertEqual(
-            "https://github.com/sharkwouter/arch-repo-test/releases/latest/download",
-            config.repositories[0].server,
+            "https://github.com/sharkwouter/arch-repo-test/releases/latest/download/minigalaxy.db",
+            config.repositories[0].url,
         )
         self.assertEqual("some_other_repo", config.repositories[1].name)
-        self.assertEqual("https://some/repo", config.repositories[1].server)
+        self.assertEqual(
+            "https://some/repo/some_other_repo.db", config.repositories[1].url
+        )
 
     @patch("os.path.isfile")
     def test_init2(self, mock_isfile: MagicMock):
@@ -59,8 +61,8 @@ class TestConfig(TestCase):
 
         self.assertEqual("minigalaxy", config.repositories[0].name)
         self.assertEqual(
-            "https://github.com/sharkwouter/arch-repo-test/releases/latest/download",
-            config.repositories[0].server,
+            "https://github.com/sharkwouter/arch-repo-test/releases/latest/download/minigalaxy.db",
+            config.repositories[0].url,
         )
 
     @patch("os.path.isfile")

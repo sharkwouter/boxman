@@ -17,3 +17,7 @@ def run():
     args = parse_args()
     boxman = Boxman(config, database_manager)
     boxman.run(args)
+
+
+if __name__ == "__main__":
+    run()
