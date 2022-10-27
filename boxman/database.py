@@ -57,10 +57,11 @@ class Database:
 
     @refresh_if_needed
     def show_package(self, package: str) -> Optional[str]:
-        with tarfile.open(self.repository.path) as t:
-            for member in t.getmembers():
-                if re.match(rf"{package}-[\d.]+-\d+/desc", member.path):
-                    return t.extractfile(member).read().decode()
+        if not package.endswith("-") and not package.endswith("."):
+            with tarfile.open(self.repository.path) as t:
+                for member in t.getmembers():
+                    if re.match(rf"{package}[\-\d.]*/desc", member.path):
+                        return t.extractfile(member).read().decode()
         return None
 
     @staticmethod
