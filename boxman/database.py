@@ -5,6 +5,7 @@ import time
 import urllib
 from typing import Callable, List, Optional
 
+from boxman.data.package_description import parse_desc
 from boxman.repository import Repository
 
 
@@ -61,7 +62,8 @@ class Database:
             with tarfile.open(self.repository.path) as t:
                 for member in t.getmembers():
                     if re.match(rf"{package}[\-\d.]*/desc", member.path):
-                        return t.extractfile(member).read().decode()
+                        result = t.extractfile(member).read().decode()
+                        return str(parse_desc(result))
         return None
 
     @staticmethod
