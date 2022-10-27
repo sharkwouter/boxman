@@ -6,10 +6,16 @@ class Repository:
     __name: str
     __url: str
     __path: str
+    __dir: str
 
-    def __init__(self, name, server, db_path):
+    def __init__(self, name: str, server: str, db_path: str):
         self.__name = name
-        self.__url = urljoin(f"{server}/", f"{name}.db")
+        self.__dir = db_path
+
+        if not server.endswith("/"):
+            server += "/"
+
+        self.__url = urljoin(server, f"{name}.db")
         self.__path = os.path.join(db_path, f"{name}.db")
 
     @property
@@ -26,4 +32,4 @@ class Repository:
 
     @property
     def dir(self) -> str:
-        return os.path.dirname(self.__path)
+        return self.__dir

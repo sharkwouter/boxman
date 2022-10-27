@@ -14,13 +14,13 @@ class Config:
     repositories: List[Repository]
     __base_directory: str
 
-    def __init__(self, base_directory: str):
+    def __init__(self, base_directory: str) -> None:
         self.__base_directory = base_directory
         self.repositories = []
         self.__set_options_defaults()
         self.__parse_config()
 
-    def __set_options_defaults(self):
+    def __set_options_defaults(self) -> None:
         root_dir = self.base_directory
         cache_dir = os.path.join(
             self.base_directory, "var", "cache", APPLICATION_NAME, "pkg"
@@ -28,7 +28,7 @@ class Config:
         db_path = os.path.join(self.base_directory, "var", "lib", APPLICATION_NAME)
         self.options = Options(root_dir=root_dir, cache_dir=cache_dir, db_path=db_path)
 
-    def __parse_config(self):
+    def __parse_config(self) -> None:
         parser = ConfigParser(
             allow_no_value=True,
             comment_prefixes=["#"],
@@ -47,7 +47,7 @@ class Config:
             else:
                 self.__parse_config_repository(parser[section])
 
-    def __parse_config_options(self, options_section: SectionProxy):
+    def __parse_config_options(self, options_section: SectionProxy) -> None:
         for key in options_section.keys():
             if key == "rootdir":
                 self.options.root_dir = self.get_relative_path(
@@ -62,12 +62,20 @@ class Config:
                     options_section.get("dbpath")
                 )
 
-    def __parse_config_repository(self, section: SectionProxy):
+    def __parse_config_repository(self, section: SectionProxy) -> None:
+        # Make sure the required variables are set
+        if not re.match(r"^[a-zA-Z_\-]+$", section.name):
+            print(f"{section.name} is not a valid repository name")
+            return
+        if not section.get("Server"):
+            print(f"Server url for repository {section.name} is not valid")
+            return
+
         self.repositories.append(
             Repository(section.name, section.get("Server"), self.options.db_path)
         )
 
-    def get_relative_path(self, path: str):
+    def get_relative_path(self, path: str) -> str:
         """
         Takes in any path string and returns a relative path within the base directory
         :param path: The path which needs to be sanitized
