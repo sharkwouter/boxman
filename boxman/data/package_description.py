@@ -58,6 +58,8 @@ class PackageDescription:
             result += f"%SIZE%\n{self.size}\n\n"
         if self.validation:
             result += f"%VALIDATE%\n{self.validation}\n\n"
+        if self.reason:
+            result += f"%REASON%\n{self.reason}\n\n"
         dependencies_string = "\n".join(self.dependencies)
         result += f"%DEPENDS%\n{dependencies_string}\n\n"
         if self.optional_dependencies:
@@ -74,8 +76,8 @@ class PackageDescription:
 
     def convert_to_local(self, reason: Optional[int] = None) -> None:
         """
-
-        :param reason: Set to 1 if this is not a dependency
+        Convert to a local
+        :param reason: Set to 1 if this is a dependency
         :return:
         """
         self.reason = reason

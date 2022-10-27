@@ -2,7 +2,7 @@ import os
 import re
 import tarfile
 import time
-import urllib
+import urllib.request
 from typing import Callable, List, Optional
 
 from boxman.data.package_description import parse_desc
@@ -27,7 +27,8 @@ class Database:
             os.makedirs(self.repository.dir)
 
         if (
-            not tarfile.is_tarfile(self.repository.path)
+            not os.path.isfile(self.repository.path)
+            or not tarfile.is_tarfile(self.repository.path)
             or self.refresh_after
             > (time.time() - os.path.getmtime(self.repository.path))
             or force

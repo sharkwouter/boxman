@@ -10,13 +10,13 @@ class Repository:
 
     def __init__(self, name: str, server: str, db_path: str):
         self.__name = name
-        self.__dir = db_path
+        self.__dir = os.path.join(db_path, "sync")
 
         if not server.endswith("/"):
             server += "/"
 
         self.__url = urljoin(server, f"{name}.db")
-        self.__path = os.path.join(db_path, f"{name}.db")
+        self.__path = os.path.join(self.__dir, f"{name}.db")
 
     @property
     def name(self) -> str:
