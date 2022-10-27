@@ -30,7 +30,15 @@ class Boxman:
             raise ValueError("Mode was not set")
 
     def __run_install(self, packages: List[str]) -> None:
-        pass
+        failed = False
+        for package in packages:
+            if self.database_manager.install_package(package):
+                print(f"Installed {package} successfully")
+            else:
+                failed = True
+                print(f"Failed to install {package}")
+        if failed:
+            exit(1)
 
     def __run_update(self, packages: List[str]) -> None:
         pass
@@ -49,6 +57,7 @@ class Boxman:
             print(result)
         else:
             print(f"package {package} not found")
+            exit(1)
 
     def __run_list(self) -> None:
         packages = self.database_manager.get_package_list()

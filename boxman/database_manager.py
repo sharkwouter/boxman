@@ -39,3 +39,6 @@ class DatabaseManager:
             result = database.show_package(package)
             if result:
                 return result
+
+    def install_package(self, package: str) -> bool:
+        return not package
