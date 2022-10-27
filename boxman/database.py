@@ -66,7 +66,7 @@ class Database:
 
     @staticmethod
     def __sanitize_package_list_entry(name: str) -> str:
-        if " " in name:
+        if re.match(r"[\w\-_]+ [\d\-.]+]", name):
             return name
         package_name, package_version, package_rel = name.rsplit("-", 2)
         return f"{package_name} {package_version}-{package_rel}"
