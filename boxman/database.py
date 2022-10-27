@@ -59,9 +59,7 @@ class Database:
     def show_package(self, package: str) -> Optional[str]:
         with tarfile.open(self.repository.path) as t:
             for member in t.getmembers():
-                if member.name == "desc" and re.match(
-                    rf".*{os.sep}{package}-[\d.]+-\d+", member.path
-                ):
+                if re.match(rf"{package}-[\d.]+-\d+/desc", member.path):
                     return t.extractfile(member).read().decode()
         return None
 

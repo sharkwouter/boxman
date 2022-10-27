@@ -44,7 +44,11 @@ class Boxman:
             print(package)
 
     def __run_show(self, package: str) -> None:
-        pass
+        result = self.database_manager.show_package(package)
+        if result:
+            print(result)
+        else:
+            print(f"package {package} not found")
 
     def __run_list(self) -> None:
         packages = self.database_manager.get_package_list()

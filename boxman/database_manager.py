@@ -33,3 +33,9 @@ class DatabaseManager:
         packages.sort()
 
         return packages
+
+    def show_package(self, package: str):
+        for database in self.databases:
+            result = database.show_package(package)
+            if result:
+                return result
