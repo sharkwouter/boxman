@@ -42,7 +42,7 @@ class Database:
         with tarfile.open(self.repository.path) as t:
             for member in t.getmembers():
                 if member.isdir():
-                    package = self.__sanitize_package_list_entry(member.name)
+                    package = self.__directory_to_package_list_entry(member.name)
                     packages.append(package)
         return packages
 
@@ -52,7 +52,7 @@ class Database:
         with tarfile.open(self.repository.path) as t:
             for member in t.getmembers():
                 if member.isdir():
-                    package = self.__sanitize_package_list_entry(member.name)
+                    package = self.__directory_to_package_list_entry(member.name)
                     if search_string in package.split(" ")[0]:
                         packages.append(package)
         return packages
@@ -69,9 +69,8 @@ class Database:
                     result += str(Desc(content, self.repository.name))
         return result
 
-    @staticmethod
-    def __sanitize_package_list_entry(name: str) -> str:
+    def __directory_to_package_list_entry(self, name: str) -> str:
         if re.match(r"[\w\-_]+ [\d\-.]+]", name):
             return name
         package_name, package_version, package_rel = name.rsplit("-", 2)
-        return f"{package_name} {package_version}-{package_rel}"
+        return f"{self.repository.name} {package_name} {package_version}-{package_rel}"

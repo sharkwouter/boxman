@@ -225,7 +225,7 @@ class Desc:
         installed_size = f"{self.size / 1024:.2f} KiB"
         build_date = time.ctime(self.build_date)
         validated_by = (
-            " ".join(self.validated_by) if len(self.validated_by) > 0 else None
+            "  ".join(self.validated_by) if len(self.validated_by) > 0 else None
         )
         return (
             f"Repository      : {self.source}\n"
@@ -251,6 +251,9 @@ class Desc:
 
     @property
     def source(self) -> str:
+        """
+        Repository in which the package can be found
+        """
         return self.__source
 
     @property
