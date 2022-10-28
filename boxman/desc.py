@@ -51,21 +51,21 @@ class Desc:
 
     def __str__(self):
         description = self.description.replace("\n", "\n                  ")
-        licenses = " ".join(self.licenses) if len(self.licenses) > 0 else None
-        groups = " ".join(self.groups) if len(self.groups) > 0 else None
-        provides = " ".join(self.provides) if len(self.provides) > 0 else None
+        licenses = "  ".join(self.licenses) if len(self.licenses) > 0 else None
+        groups = "  ".join(self.groups) if len(self.groups) > 0 else None
+        provides = "  ".join(self.provides) if len(self.provides) > 0 else None
         dependencies = (
-            " ".join(self.dependencies) if len(self.dependencies) > 0 else None
+            "  ".join(self.dependencies) if len(self.dependencies) > 0 else None
         )
         optional_dependencies = (
-            " ".join(self.optional_dependencies)
+            "  ".join(self.optional_dependencies)
             if len(self.optional_dependencies) > 0
             else None
         )
         conflicts_with = (
-            " ".join(self.conflicts_with) if len(self.conflicts_with) > 0 else None
+            "  ".join(self.conflicts_with) if len(self.conflicts_with) > 0 else None
         )
-        replaces = " ".join(self.replaces) if len(self.replaces) > 0 else None
+        replaces = "  ".join(self.replaces) if len(self.replaces) > 0 else None
         download_size = (
             f"{self.compressed_size / 1024 :.2f} KiB" if self.compressed_size else None
         )
