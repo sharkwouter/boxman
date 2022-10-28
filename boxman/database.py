@@ -5,7 +5,7 @@ import time
 import urllib.request
 from typing import Callable, List, Optional
 
-from boxman.data.desc import Desc
+from boxman.desc import Desc
 from boxman.repository import Repository
 
 
