@@ -16,7 +16,7 @@ boxman list  # Print a list of available packages
 boxman installed  # Print a list of installed packages
 ```
 
-**None of these commands have been fully implemented yet!**
+**Currently only list, search and show work! Install, update, remove and installed do not work!**
 
 ## Configuration
 
