@@ -37,6 +37,9 @@ class Desc:
             assert key in self.__values
             assert len(self.__values[key]) > 0
 
+    def __eq__(self, other):
+        return self.__values == other.__values and self.__source == other.__source
+
     def __repr__(self):
         result = ""
         for key in self.__values:
