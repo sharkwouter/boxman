@@ -54,7 +54,7 @@ class Boxman:
     def __run_show(self, package: str) -> None:
         result = self.database_manager.show_package(package)
         if result:
-            print(result)
+            print(result, end="")
         else:
             print(f"package {package} not found")
             exit(1)

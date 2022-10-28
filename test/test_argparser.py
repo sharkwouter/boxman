@@ -71,10 +71,10 @@ class TestArgparser(TestCase):
         parse_args(["show", "test1", "test2"])
         mock_exit.assert_called_with(2)
 
-    @patch("sys.exit")
-    def test_show_no_packages(self, mock_exit: MagicMock):
-        parse_args(["show"])
-        mock_exit.assert_called_with(2)
+    def test_show_no_packages(self):
+        actual = parse_args(["show"])
+        self.assertEqual([""], actual.arguments)
+        self.assertEqual(Mode.SHOW, actual.mode)
 
     def test_update(self):
         actual = parse_args(["update"])

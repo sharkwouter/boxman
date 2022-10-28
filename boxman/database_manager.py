@@ -35,10 +35,11 @@ class DatabaseManager:
         return packages
 
     def show_package(self, package: str):
+        result = ""
         for database in self.databases:
-            result = database.show_package(package)
-            if result:
-                return result
+            result += database.show_package(package)
+        if result:
+            return result
 
     def install_package(self, package: str) -> bool:
         return not package

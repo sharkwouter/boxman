@@ -5,7 +5,7 @@ import time
 import urllib.request
 from typing import Callable, List, Optional
 
-from boxman.data.package_description import parse_desc
+from boxman.data.desc import Desc
 from boxman.repository import Repository
 
 
@@ -36,7 +36,7 @@ class Database:
             print(f"Downloading database {self.repository.name}")
             urllib.request.urlretrieve(self.repository.url, self.repository.path)
 
-    @refresh_if_needed
+    # @refresh_if_needed
     def get_package_list(self) -> List[str]:
         packages = []
         with tarfile.open(self.repository.path) as t:
@@ -46,7 +46,7 @@ class Database:
                     packages.append(package)
         return packages
 
-    @refresh_if_needed
+    # @refresh_if_needed
     def search_packages(self, search_string: str) -> List[str]:
         packages = []
         with tarfile.open(self.repository.path) as t:
@@ -57,15 +57,17 @@ class Database:
                         packages.append(package)
         return packages
 
-    @refresh_if_needed
+    # @refresh_if_needed
     def show_package(self, package: str) -> Optional[str]:
-        if not package.endswith("-") and not package.endswith("."):
-            with tarfile.open(self.repository.path) as t:
-                for member in t.getmembers():
-                    if re.match(rf"{package}[\-\d.]*/desc", member.path):
-                        result = t.extractfile(member).read().decode()
-                        return str(parse_desc(result))
-        return None
+        result = ""
+        with tarfile.open(self.repository.path) as t:
+            for member in t.getmembers():
+                if re.match(
+                    rf"{package if package else r'.*'}-\d[\w.]*-\d+/desc", member.path
+                ):
+                    content = t.extractfile(member).read().decode()
+                    result += str(Desc(content, self.repository.name))
+        return result
 
     @staticmethod
     def __sanitize_package_list_entry(name: str) -> str:

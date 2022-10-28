@@ -46,7 +46,11 @@ def add_show_parser(subparser: _SubParsersAction) -> None:
     )
 
     parser.add_argument(
-        "package", nargs=1, type=str, help="Package to show information about"
+        "package",
+        nargs="?",
+        type=str,
+        help="Package to show information about",
+        default="",
     )
 
 
@@ -75,7 +79,7 @@ def get_argument_list_from_args(args: Namespace, mode: Mode):
     if mode in [Mode.INSTALL, Mode.UPDATE, Mode.REMOVE]:
         arguments = args.packages
     elif mode == Mode.SHOW:
-        arguments = args.package
+        arguments = [args.package]
     elif mode == Mode.SEARCH:
         arguments = args.string
     return arguments
