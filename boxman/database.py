@@ -36,7 +36,7 @@ class Database:
             print(f"Downloading database {self.repository.name}")
             urllib.request.urlretrieve(self.repository.url, self.repository.path)
 
-    # @refresh_if_needed
+    @refresh_if_needed
     def get_package_list(self) -> List[str]:
         packages = []
         with tarfile.open(self.repository.path) as t:
@@ -46,7 +46,7 @@ class Database:
                     packages.append(package)
         return packages
 
-    # @refresh_if_needed
+    @refresh_if_needed
     def search_packages(self, search_string: str) -> List[str]:
         packages = []
         with tarfile.open(self.repository.path) as t:
@@ -57,16 +57,12 @@ class Database:
                         packages.append(package)
         return packages
 
-    # @refresh_if_needed
+    @refresh_if_needed
     def show_package(self, package: str) -> Optional[str]:
         result = ""
-        with tarfile.open(self.repository.path) as t:
-            for member in t.getmembers():
-                if re.match(
-                    rf"{package if package else r'.*'}-\d[\w.]*-\d+/desc", member.path
-                ):
-                    content = t.extractfile(member).read().decode()
-                    result += str(Desc(content, self.repository.name))
+        for desc in self.get_desc_list():
+            if not package or desc.name == package:
+                result += str(desc)
         return result
 
     def __directory_to_package_list_entry(self, name: str) -> str:
@@ -74,3 +70,12 @@ class Database:
             return name
         package_name, package_version, package_rel = name.rsplit("-", 2)
         return f"{self.repository.name} {package_name} {package_version}-{package_rel}"
+
+    def get_desc_list(self) -> List[Desc]:
+        result = []
+        with tarfile.open(self.repository.path) as t:
+            for member in t.getmembers():
+                if re.match(r"[\w\-._]*-\d[\w.]*-\d+/desc", member.path):
+                    content = t.extractfile(member).read().decode()
+                    result.append(Desc(content, self.repository.name))
+        return result
