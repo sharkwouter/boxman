@@ -23,7 +23,12 @@ class TestArgparser(TestCase):
 
     def test_list(self):
         actual = parse_args(["list"])
-        self.assertEqual(None, actual.arguments)
+        self.assertEqual([""], actual.arguments)
+        self.assertEqual(Mode.LIST, actual.mode)
+
+    def test_list_with_repository(self):
+        actual = parse_args(["list", "test"])
+        self.assertEqual(["test"], actual.arguments)
         self.assertEqual(Mode.LIST, actual.mode)
 
     def test_search(self):

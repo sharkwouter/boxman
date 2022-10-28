@@ -23,7 +23,7 @@ class Boxman:
         elif args.mode == Mode.SHOW:
             self.__run_show(args.arguments[0])
         elif args.mode == Mode.LIST:
-            self.__run_list()
+            self.__run_list(args.arguments[0])
         elif args.mode == Mode.INSTALLED:
             self.__run_installed()
         elif args.mode == Mode.NOT_SET:
@@ -59,8 +59,8 @@ class Boxman:
             print(f"package {package} not found")
             exit(1)
 
-    def __run_list(self) -> None:
-        packages = self.database_manager.get_package_list()
+    def __run_list(self, repository: str) -> None:
+        packages = self.database_manager.get_package_list(repository)
         for package in packages:
             print(package)
 

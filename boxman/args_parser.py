@@ -14,7 +14,15 @@ def add_install_parser(subparser: _SubParsersAction) -> None:
 
 
 def add_list_parser(subparser: _SubParsersAction) -> None:
-    subparser.add_parser(name="list", help="List all available packages")
+    parser = subparser.add_parser(name="list", help="List packages in a repository")
+
+    parser.add_argument(
+        "repository",
+        nargs="?",
+        type=str,
+        help="Repository to list packages from",
+        default="",
+    )
 
 
 def add_search_parser(subparser: _SubParsersAction) -> None:
@@ -80,6 +88,8 @@ def get_argument_list_from_args(args: Namespace, mode: Mode):
         arguments = args.packages
     elif mode == Mode.SHOW:
         arguments = [args.package]
+    elif mode == Mode.LIST:
+        arguments = [args.repository]
     elif mode == Mode.SEARCH:
         arguments = args.string
     return arguments

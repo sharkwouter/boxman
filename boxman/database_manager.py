@@ -12,12 +12,19 @@ class DatabaseManager:
         for repository in config.repositories:
             self.databases.append(Database(repository, refresh_after))
 
-    def get_package_list(self):
+    def get_package_list(self, repository: str):
         packages = []
+        repository_exists = False
         for database in self.databases:
-            for package in database.get_package_list():
-                if package not in packages:
-                    packages.append(package)
+            if not repository or database.repository.name == repository:
+                repository_exists = True
+                for package in database.get_package_list():
+                    if package not in packages:
+                        packages.append(package)
+
+        if not repository_exists:
+            print(f'error: repository "{repository}" was not found.')
+            exit(1)
 
         packages.sort()
 
