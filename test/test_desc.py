@@ -1,3 +1,5 @@
+import os
+import time
 from unittest import TestCase
 
 from boxman.desc import Desc
@@ -121,6 +123,11 @@ Unknown Packager
 
     def test_to_string(self):
         self.maxDiff = None  # Make sure we get output that makes sense in GitHub CI
+
+        # Make sure the timezone matches
+        os.environ["TZ"] = "Europe/Berlin"
+        time.tzset()
+
         data = """%FILENAME%
 pspirkeyb-r1-1-mips.pkg.tar.gz
 
