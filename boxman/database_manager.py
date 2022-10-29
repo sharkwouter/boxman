@@ -1,6 +1,7 @@
 import os.path
+import tarfile
 import urllib.request
-from typing import Optional
+from typing import Optional, List
 from urllib.parse import urljoin
 
 from boxman import Config
@@ -24,6 +25,7 @@ class DatabaseManager:
         for repository in config.repositories:
             self.databases.append(Database(repository, refresh_after))
         self.download_directory = config.options.cache_dir
+        self.root_dir = config.options.root_dir
 
     def get_package_list(self, repository: str):
         packages = []
@@ -40,6 +42,9 @@ class DatabaseManager:
             exit(1)
 
         return packages
+
+    def get_installed_list(self):
+        return self.local_database.get_package_list()
 
     def search_packages(self, search_string: str):
         packages = []
@@ -70,12 +75,46 @@ class DatabaseManager:
                 self.install_package(dependency, False)
 
         if not self.local_database.get_desc(package):
-            result = self.download_package(package_description)
-            if not result:
+            downloaded_archive = self.download_package(package_description)
+            if not downloaded_archive:
                 return False
+            installed_files = self.extract_archive(downloaded_archive)
+            self.local_database.write_files_list(package_description, installed_files)
             self.local_database.install_desc(package_description, installed_explicitly)
 
         return True
+
+    def extract_archive(self, archive: str) -> List[str]:
+        files_to_extract = self.get_files_to_extract_from_archive(archive)
+        with tarfile.open(archive) as t:
+            for member in t.getmembers():
+                if member.path in files_to_extract:
+                    target = os.path.join(self.root_dir, member.path)
+                    if member.isdir():
+                        if not os.path.exists(target):
+                            os.makedirs(target)
+                    else:
+                        with open(target, "wb") as target_file:
+                            target_file.write(t.extractfile(member).read())
+
+        for file in files_to_extract:
+            assert os.path.exists(file)
+
+        return files_to_extract
+
+    def get_files_to_extract_from_archive(self, archive) -> List[str]:
+        files = []
+        with tarfile.open(archive) as t:
+            for member in t.getmembers():
+                if member.name.startswith(".") or ".." in member.path:
+                    continue
+                extract_to = os.path.join(self.root_dir, member.path)
+                if len(extract_to) < (len(self.root_dir) + len(member.path) - 1):
+                    raise Exception(
+                        f"Failed to concatenate {self.root_dir} and {member.path}, result was {extract_to}"
+                    )
+                files.append(member.path)
+        return files
 
     def get_package_desc(self, package: str) -> Optional[Desc]:
         descs_found = []
@@ -91,7 +130,7 @@ class DatabaseManager:
 
         return newest_desc
 
-    def download_package(self, desc: Desc) -> bool:
+    def download_package(self, desc: Desc) -> Optional[str]:
         if not os.path.exists(self.download_directory):
             os.makedirs(self.download_directory)
         current_repository = self.get_repository(desc.source)
@@ -106,9 +145,9 @@ class DatabaseManager:
         if not checksums_match(download_path, desc.md5_checksum, desc.sha256_checksum):
             os.remove(download_path)
             print(f"Downloaded {desc.name} package did not match checksums in db")
-            return False
+            return None
 
-        return True
+        return download_path
 
     def get_repository(self, name: str) -> Optional[Repository]:
         for database in self.databases:
