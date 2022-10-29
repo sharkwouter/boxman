@@ -44,6 +44,7 @@ class Database:
                 if member.isdir():
                     package = self.__directory_to_package_list_entry(member.name)
                     packages.append(package)
+        packages.sort()
         return packages
 
     @refresh_if_needed
@@ -57,7 +58,6 @@ class Database:
                         packages.append(package)
         return packages
 
-    @refresh_if_needed
     def show_package(self, package: str) -> Optional[str]:
         result = ""
         for desc in self.get_desc_list():
@@ -71,6 +71,7 @@ class Database:
         package_name, package_version, package_rel = name.rsplit("-", 2)
         return f"{self.repository.name} {package_name} {package_version}-{package_rel}"
 
+    @refresh_if_needed
     def get_desc_list(self) -> List[Desc]:
         result = []
         with tarfile.open(self.repository.path) as t:

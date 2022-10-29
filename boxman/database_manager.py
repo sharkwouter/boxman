@@ -26,8 +26,6 @@ class DatabaseManager:
             print(f'error: repository "{repository}" was not found.')
             exit(1)
 
-        packages.sort()
-
         return packages
 
     def search_packages(self, search_string: str):

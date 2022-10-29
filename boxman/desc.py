@@ -96,6 +96,61 @@ class Desc:
             "\n"
         )
 
+    def convert_to_local(self, installed_explicitly=True):
+        self.set_validation()
+        new_values = {
+            "NAME": self.__values["NAME"],
+            "VERSION": self.__values["VERSION"],
+            "BASE": self.__values["BASE"],
+            "ARCH": self.__values["ARCH"],
+            "BUILDDATE": self.__values["BUILDDATE"],
+            "INSTALLDATE": [int(time.time())],
+            "SIZE": self.__values["ISIZE"],
+            "VALIDATION": self.__values["VALIDATION"],
+        }
+
+        # Set reason this package is installed
+        if not installed_explicitly:
+            new_values["REASON"] = 1
+
+        self.__values = new_values
+
+    def __copy_optional_values_to_local_dict(  # noqa: C901
+        self, target_dict: Dict
+    ) -> None:
+        if "DESC" in self.__values:
+            target_dict["DESC"] = self.__values["DESC"]
+        if "GROUPS" in self.__values:
+            target_dict["GROUPS"] = self.__values["GROUPS"]
+        if "URL" in self.__values:
+            target_dict["URL"] = self.__values["URL"]
+        if "LICENSE" in self.__values:
+            target_dict["LICENSE"] = self.__values["LICENSE"]
+        if "DEPENDS" in self.__values:
+            target_dict["DEPENDS"] = self.__values["DEPENDS"]
+        if "OPTDEPENDS" in self.__values:
+            target_dict["OPTDEPENDS"] = self.__values["OPTDEPENDS"]
+        if "MAKEDEPENDS" in self.__values:
+            target_dict["MAKEDEPENDS"] = self.__values["MAKEDEPENDS"]
+        if "CHECKDEPENDS" in self.__values:
+            target_dict["CHECKDEPENDS"] = self.__values["CHECKDEPENDS"]
+        if "CONFLICTS" in self.__values:
+            target_dict["CONFLICTS"] = self.__values["CONFLICTS"]
+        if "PROVIDES" in self.__values:
+            target_dict["PROVIDES"] = self.__values["PROVIDES"]
+        # XDATA is skipped, because I don't know what it does
+
+    def set_validation(self):
+        self.__values["VALIDATION"] = []
+
+        # Pacman would also add pgp if PGPSIG is set, but boxman does no PGP validation
+        if "MD5SUM" in self.__values:
+            self.__values["VALIDATION"].append("md5")
+        if "SHA256SUM" in self.__values:
+            self.__values["VALIDATION"].append("sha256")
+        if len(self.__values["VALIDATION"]) == 0:
+            self.__values["VALIDATION"].append("none")
+
     @property
     def source(self) -> str:
         """
@@ -109,6 +164,13 @@ class Desc:
         Name of the package without version information
         """
         return self.__values["NAME"][0]
+
+    @property
+    def base(self) -> str:
+        """
+        Name of the package without version information
+        """
+        return self.__values["BASE"][0]
 
     @property
     def version(self) -> str:
@@ -270,3 +332,8 @@ class Desc:
         if "BUILDDATE" in self.__values and len(self.__values["BUILDDATE"]) > 0:
             return int(self.__values["BUILDDATE"][0])
         return 0
+
+    @property
+    def install_date(self) -> Optional[int]:
+        if "INSTALLDATE" in self.__values and len(self.__values["INSTALLDATE"]) > 0:
+            return int(self.__values["INSTALLDATE"][0])
