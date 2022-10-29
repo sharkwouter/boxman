@@ -13,7 +13,7 @@ from boxman.repository import Repository
 
 class DatabaseManager:
     def __init__(
-        self, local_database: LocalDatabase, config: Config, refresh_after: int = 30
+        self, local_database: LocalDatabase, config: Config, refresh_after: int = 1800
     ):
         """
 

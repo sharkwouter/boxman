@@ -26,13 +26,21 @@ class Database:
         if not os.path.isdir(self.repository.dir):
             os.makedirs(self.repository.dir)
 
+        should_refresh = False
         if (
             not os.path.isfile(self.repository.path)
             or not tarfile.is_tarfile(self.repository.path)
-            or self.refresh_after
-            > (time.time() - os.path.getmtime(self.repository.path))
             or force
         ):
+            should_refresh = True
+        else:
+            time_since_last_refresh = int(
+                time.time() - os.path.getmtime(self.repository.path)
+            )
+            if time_since_last_refresh > self.refresh_after:
+                should_refresh = True
+
+        if should_refresh:
             print(f"Downloading database {self.repository.name}")
             urllib.request.urlretrieve(self.repository.url, self.repository.path)
 
