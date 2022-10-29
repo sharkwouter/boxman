@@ -28,6 +28,8 @@ class TestVersion(TestCase):
 
     def test_greater_than(self):
         self.assertTrue(Version("1-2") > Version("1-1"))
+        self.assertTrue(Version("r1-2") > Version("r1-1"))
+        self.assertTrue(Version("r2-1") > Version("r1-1"))
         self.assertTrue(Version("2-1") > Version("1-4"))
         self.assertTrue(Version("1.0.1-1") > Version("1.0.0-1"))
         self.assertTrue(Version("3.4.arch2-1") > Version("3.4.arch1-1"))
@@ -41,6 +43,8 @@ class TestVersion(TestCase):
 
     def test_smaller_than(self):
         self.assertTrue(Version("1-1") < Version("2-1"))
+        self.assertTrue(Version("r1-1") < Version("r2-1"))
+        self.assertTrue(Version("r1-1") < Version("r1-2"))
         self.assertTrue(Version("1.0.0-1") < Version("1.0.1-1"))
         self.assertTrue(Version("3.4.arch1-1") < Version("3.4.arch2-1"))
         self.assertTrue(Version("1.0-1") < Version("1.0.1-1"))
