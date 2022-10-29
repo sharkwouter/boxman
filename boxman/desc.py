@@ -38,6 +38,7 @@ class Desc:
         for key in required_keys:
             assert key in self.__values
             assert len(self.__values[key]) > 0
+        assert "SIZE" in self.__values or ("ISIZE" in self.__values and "CSIZE" in self.__values)
 
     def __eq__(self, other):
         return self.__values == other.__values and self.__source == other.__source
@@ -219,6 +220,14 @@ class Desc:
         return []
 
     @property
+    def file_name(self) -> Optional[str]:
+        """
+        File name of the package
+        """
+        if "FILENAME" in self.__values and len(self.__values["FILENAME"]) > 0:
+            return self.__values["FILENAME"][0]
+
+    @property
     def url(self) -> str:
         """
         URL to the homepage of the package
@@ -351,3 +360,19 @@ class Desc:
     def install_date(self) -> Optional[int]:
         if "INSTALLDATE" in self.__values and len(self.__values["INSTALLDATE"]) > 0:
             return int(self.__values["INSTALLDATE"][0])
+
+    @property
+    def md5_checksum(self) -> Optional[str]:
+        """
+        MD5 checksum of the package
+        """
+        if "MD5SUM" in self.__values and len(self.__values["MD5SUM"]) > 0:
+            return self.__values["MD5SUM"][0]
+
+    @property
+    def sha256_checksum(self) -> Optional[str]:
+        """
+        SHA 256 checksum of the package
+        """
+        if "SHA256SUM" in self.__values and len(self.__values["SHA256SUM"]) > 0:
+            return self.__values["SHA256SUM"][0]
