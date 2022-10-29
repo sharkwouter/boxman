@@ -18,7 +18,7 @@ def refresh_if_needed(func: Callable):
 
 
 class Database:
-    def __init__(self, repository: Repository, refresh_after: int = 1800):
+    def __init__(self, repository: Repository, refresh_after):
         self.repository = repository
         self.refresh_after = refresh_after
 
