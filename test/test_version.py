@@ -4,7 +4,6 @@ from boxman.version import Version
 
 
 class TestVersion(TestCase):
-
     def test_init(self):
         version_and_expected_version_parts = [
             ("12.2.0-1", [12, 2, 0, 1]),
@@ -21,7 +20,11 @@ class TestVersion(TestCase):
         for version, version_parts in version_and_expected_version_parts:
             instance = Version(version)
             self.assertEqual(version, instance.version)
-            self.assertEqual(version_parts, instance.version_parts, msg=f"Version parts for {version} do not match up")
+            self.assertEqual(
+                version_parts,
+                instance.version_parts,
+                msg=f"Version parts for {version} do not match up",
+            )
 
     def test_greater_than(self):
         self.assertTrue(Version("1-2") > Version("1-1"))

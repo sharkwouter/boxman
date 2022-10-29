@@ -38,7 +38,9 @@ class Desc:
         for key in required_keys:
             assert key in self.__values
             assert len(self.__values[key]) > 0
-        assert "SIZE" in self.__values or ("ISIZE" in self.__values and "CSIZE" in self.__values)
+        assert "SIZE" in self.__values or (
+            "ISIZE" in self.__values and "CSIZE" in self.__values
+        )
 
     def __eq__(self, other):
         return self.__values == other.__values and self.__source == other.__source

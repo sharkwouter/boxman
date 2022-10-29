@@ -55,11 +55,17 @@ Unknown Packager
         self.assertEqual("pspirkeyb", desc.name)
         self.assertEqual("pspirkeyb", desc.base)
         self.assertEqual("r1-1", str(desc.version))
-        self.assertEqual("a library for using IRDA keyboards with Playstation Portable", desc.description)
+        self.assertEqual(
+            "a library for using IRDA keyboards with Playstation Portable",
+            desc.description,
+        )
         self.assertEqual(49378, desc.compressed_size)
         self.assertEqual(135283, desc.size)
         self.assertEqual("52976c1ef3ebad0f981b1e240c111034", desc.md5_checksum)
-        self.assertEqual("bd5d0538e945a456dc3b5001377b3ff5079065ce6f4ab686fbbb14e1d1ec9c12", desc.sha256_checksum)
+        self.assertEqual(
+            "bd5d0538e945a456dc3b5001377b3ff5079065ce6f4ab686fbbb14e1d1ec9c12",
+            desc.sha256_checksum,
+        )
         self.assertEqual("https://github.com/pspdev/psp-ports", desc.url)
         self.assertEqual(["LGPL2.1"], desc.licenses)
         self.assertEqual("mips", desc.architecture)

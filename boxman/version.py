@@ -13,12 +13,12 @@ class Version:
 
     def __generate_version_parts(self):
         sanitized_version_string = ""
-        for letter in self.version:
-            if letter == "-":
-                letter = "."
+        for letter in self.version.replace("-", "."):
             if letter.isdecimal() or letter == ".":
                 sanitized_version_string += letter
-        if len(sanitized_version_string) == 0 or not re.match(r"(\d+\.?)+", sanitized_version_string):
+        if len(sanitized_version_string) == 0 or not re.match(
+            r"(\d+\.?)+", sanitized_version_string
+        ):
             raise Exception("Cannot parse string")
 
         self.version_parts = []
