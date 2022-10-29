@@ -128,7 +128,7 @@ class Desc:
 
         # Set reason this package is installed
         if not installed_explicitly:
-            new_values["REASON"] = 1
+            new_values["REASON"] = [1]
 
         self.__values = new_values
 

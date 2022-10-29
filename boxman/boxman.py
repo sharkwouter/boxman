@@ -65,4 +65,4 @@ class Boxman:
             print(package)
 
     def __run_installed(self) -> None:
-        pass
+        print(self.database_manager.get_installed_package_desc("sdl2"))

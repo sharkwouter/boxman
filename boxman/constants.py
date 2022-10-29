@@ -1,1 +1,2 @@
 APPLICATION_NAME = "boxman"
+ALPM_DB_VERSION = "9"
