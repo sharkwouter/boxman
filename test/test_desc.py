@@ -120,6 +120,7 @@ Unknown Packager
         self.assertSetEqual(set(data.split("\n")), set(repr(desc).split("\n")))
 
     def test_to_string(self):
+        self.maxDiff = None  # Make sure we get output that makes sense in GitHub CI
         data = """%FILENAME%
 pspirkeyb-r1-1-mips.pkg.tar.gz
 
