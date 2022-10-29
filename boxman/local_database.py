@@ -34,22 +34,22 @@ class LocalDatabase:
         package_name, package_version, package_rel = name.rsplit("-", 2)
         return f"{package_name} {package_version}-{package_rel}"
 
-    def get_installed_files(self, package: Optional[str]) -> List[str]:
-        result = []
-        match_package_string = package if package else r"[\w\-._]+"
-        for member in os.listdir(self.__dir):
-            if re.match(rf"{match_package_string}-\d[\w.]*-\d+/files", member):
-                full_path = os.path.join(self.__dir, member)
-                with open(full_path, "r") as file:
-                    lines = file.readlines()
-                    for line in lines:
+    def get_installed_files(self, package: str) -> List[str]:
+        files = []
+        installed = os.listdir(self.__dir)
+        installed.sort()
+        for member in installed:
+            directory = os.path.join(self.__dir, member)
+            if os.path.isdir(directory):
+                files_path = os.path.join(directory, "files")
+                if not os.path.isfile(files_path):
+                    continue
+                with open(files_path, "r") as file:
+                    for line in file.read().split("\n"):
                         if not line or line == "%FILES%":
                             continue
-                        result.append(
-                            f"{os.path.dirname(full_path).rsplit('-', 2)[0]} {line}"
-                        )
-
-        return result
+                        files.append(f"{member.rsplit('-', 2)[0]} {line}")
+        return files
 
     def get_desc_list(self) -> List[Desc]:
         result = []
@@ -87,7 +87,7 @@ class LocalDatabase:
         lines = ["%FILES%"] + files + [""]
 
         with open(os.path.join(directory, "files"), "w") as files_file:
-            files_file.writelines(lines)
+            files_file.write("\n".join(lines))
 
     def get_desc_directory(self, desc: Desc):
         return os.path.join(self.__dir, f"{desc.name}-{desc.version}")

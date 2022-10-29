@@ -62,6 +62,18 @@ def add_show_parser(subparser: _SubParsersAction) -> None:
     )
 
 
+def add_files_parser(subparser: _SubParsersAction) -> None:
+    parser = subparser.add_parser(name="files", help="List installed files per package")
+
+    parser.add_argument(
+        "package",
+        nargs="?",
+        type=str,
+        help="Package to show installed files for",
+        default="",
+    )
+
+
 def add_update_parser(subparser: _SubParsersAction) -> None:
     parser = subparser.add_parser(
         name="update", help="Update all or specific installed packages"
@@ -86,7 +98,7 @@ def get_argument_list_from_args(args: Namespace, mode: Mode):
     arguments = None
     if mode in [Mode.INSTALL, Mode.UPDATE, Mode.REMOVE]:
         arguments = args.packages
-    elif mode == Mode.SHOW:
+    elif mode in [Mode.SHOW, Mode.FILES]:
         arguments = [args.package]
     elif mode == Mode.LIST:
         arguments = [args.repository]
@@ -113,6 +125,7 @@ def parse_args(args_list: Optional[List[str]] = None) -> ParsedArguments:
     add_installed_parser(subparser)
     add_remove_parser(subparser)
     add_show_parser(subparser)
+    add_files_parser(subparser)
     add_update_parser(subparser)
 
     # Parse and return the arguments

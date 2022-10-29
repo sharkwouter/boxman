@@ -6,6 +6,7 @@ class Mode(Enum):
     LIST = auto()
     SEARCH = auto()
     INSTALLED = auto()
+    FILES = auto()
     REMOVE = auto()
     SHOW = auto()
     UPDATE = auto()

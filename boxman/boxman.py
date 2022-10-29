@@ -26,6 +26,8 @@ class Boxman:
             self.__run_list(args.arguments[0])
         elif args.mode == Mode.INSTALLED:
             self.__run_installed()
+        elif args.mode == Mode.FILES:
+            self.__run_files(args.arguments[0])
         elif args.mode == Mode.NOT_SET:
             raise ValueError("Mode was not set")
 
@@ -66,3 +68,11 @@ class Boxman:
 
     def __run_installed(self) -> None:
         print("\n".join(self.database_manager.get_installed_list()))
+
+    def __run_files(self, package: str) -> None:
+        result = self.database_manager.show_files(package)
+        if result:
+            print("\n".join(result))
+        else:
+            print(f"package {package} not found")
+            exit(1)

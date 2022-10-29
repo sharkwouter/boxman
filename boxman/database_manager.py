@@ -64,6 +64,16 @@ class DatabaseManager:
         if result:
             return result
 
+    def show_files(self, package: str):
+        result = self.local_database.get_installed_files(package)
+        for i in range(len(result)):
+            package, path = result[i].split(" ")
+            full_path = os.path.join(self.root_dir, path)
+            if os.path.isdir(full_path):
+                full_path += os.sep
+            result[i] = f"{package} {full_path}"
+        return result
+
     def install_package(self, package: str, installed_explicitly=True) -> bool:
         package_description = self.get_package_desc(package)
         if not package_description:
@@ -106,7 +116,11 @@ class DatabaseManager:
         files = []
         with tarfile.open(archive) as t:
             for member in t.getmembers():
-                if member.name.startswith(".") or ".." in member.path:
+                if (
+                    member.name.startswith(".")
+                    or ".." in member.path
+                    or ":\\" in member.path
+                ):
                     continue
                 extract_to = os.path.join(self.root_dir, member.path)
                 if len(extract_to) < (len(self.root_dir) + len(member.path) - 1):
