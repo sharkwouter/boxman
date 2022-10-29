@@ -1,5 +1,8 @@
+from typing import Optional
+
 from boxman import Config
 from boxman.database import Database
+from boxman.desc import Desc
 
 
 class DatabaseManager:
@@ -47,4 +50,18 @@ class DatabaseManager:
             return result
 
     def install_package(self, package: str) -> bool:
-        return not package
+        pass
+
+    def get_package_desc(self, package: str) -> Optional[Desc]:
+        descs_found = []
+        for database in self.databases:
+            desc = database.get_desc(package)
+            if desc:
+                descs_found.append(desc)
+
+        newest_desc = None
+        for desc in descs_found:
+            if newest_desc is None or desc > newest_desc:
+                newest_desc = desc
+
+        return newest_desc

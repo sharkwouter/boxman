@@ -2,6 +2,8 @@ import re
 import time
 from typing import Optional, List, Dict
 
+from boxman.version import Version
+
 
 class Desc:
     __values: Dict
@@ -39,6 +41,18 @@ class Desc:
 
     def __eq__(self, other):
         return self.__values == other.__values and self.__source == other.__source
+
+    def __lt__(self, other):
+        if self.name != other.name:
+            return self.name < other.name
+
+        return self.version < other.version
+
+    def __gt__(self, other):
+        if self.name != other.name:
+            return self.name > other.name
+
+        return self.version > other.version
 
     def __repr__(self):
         result = ""
@@ -173,11 +187,11 @@ class Desc:
         return self.__values["BASE"][0]
 
     @property
-    def version(self) -> str:
+    def version(self) -> Version:
         """
         Package version in format "version-build", example: 1.0.1-4
         """
-        return self.__values["VERSION"][0]
+        return Version(self.__values["VERSION"][0])
 
     @property
     def architecture(self) -> str:

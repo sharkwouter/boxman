@@ -80,3 +80,10 @@ class Database:
                     content = t.extractfile(member).read().decode()
                     result.append(Desc(content, self.repository.name))
         return result
+
+    def get_desc(self, package: str) -> Optional[Desc]:
+        with tarfile.open(self.repository.path) as t:
+            for member in t.getmembers():
+                if re.match(rf"^{package}-\d[\w.]*-\d+/desc", member.path):
+                    content = t.extractfile(member).read().decode()
+                    return Desc(content, self.repository.name)
