@@ -54,7 +54,7 @@ class LocalDatabase:
     def get_desc_list(self) -> List[Desc]:
         result = []
         for member in os.listdir(self.__dir):
-            if re.match(rf"[\w\-._]*-\d[\w.]*-\d+", member):
+            if re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
                 full_path = os.path.join(self.__dir, member, "desc")
                 with open(full_path, "r") as desc_file:
                     result.append(Desc(desc_file.read(), "local"))
@@ -69,11 +69,8 @@ class LocalDatabase:
 
     def install_desc(self, desc: Desc, installed_explicitly: bool = True) -> None:
         directory = self.get_desc_directory(desc)
-        if os.path.exists(directory):
-            print(f"package {desc.name} version {desc.version} is already installed")
-            return
-
-        os.makedirs(directory)
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
         desc.convert_to_local(installed_explicitly)
         with open(os.path.join(directory, "desc"), "w") as desc_file:
             desc_file.write(repr(desc))
