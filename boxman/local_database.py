@@ -54,16 +54,16 @@ class LocalDatabase:
     def get_desc_list(self) -> List[Desc]:
         result = []
         for member in os.listdir(self.__dir):
-            if re.match(r"[\w\-._]*-\d[\w.]*-\d+/desc", member):
-                full_path = os.path.join(self.__dir, member)
+            if re.match(rf"[\w\-._]*-\d[\w.]*-\d+", member):
+                full_path = os.path.join(self.__dir, member, "desc")
                 with open(full_path, "r") as desc_file:
                     result.append(Desc(desc_file.read(), "local"))
         return result
 
     def get_desc(self, package: str) -> Optional[Desc]:
         for member in os.listdir(self.__dir):
-            if re.match(rf"^{package}-\d[\w.]*-\d+/desc", member):
-                full_path = os.path.join(self.__dir, member)
+            if re.match(rf"^{package}-\d[\w.]*-\d+", member):
+                full_path = os.path.join(self.__dir, member, "desc")
                 with open(full_path, "r") as desc_file:
                     return Desc(desc_file.read(), "local")
 
