@@ -1,4 +1,6 @@
 import os.path
+import re
+import shutil
 import tarfile
 import urllib.request
 from typing import Optional, List
@@ -74,15 +76,29 @@ class DatabaseManager:
             result[i] = f"{package} {full_path}"
         return result
 
-    def install_package(self, package: str, installed_explicitly=True) -> bool:
+    def install_package(  # noqa: C901
+        self, package: str, installed_explicitly=True
+    ) -> bool:
         package_description = self.get_package_desc(package)
         if not package_description:
             print(f"Failed to find package {package}")
             return False
 
+        installed_version = self.local_database.get_package_version_if_installed(
+            package
+        )
+        if installed_version:
+            if package_description.version > installed_version:
+                self.remove_package(package)
+            else:
+                return True
+
         for dependency in package_description.dependencies:
             if not self.local_database.get_desc(dependency):
-                self.install_package(dependency, False)
+                result = self.install_package(dependency, False)
+                if not result:
+                    print(f"Failed to install dependency {dependency}")
+                    return False
 
         if not self.local_database.get_desc(package):
             downloaded_archive = self.download_package(package_description)
@@ -93,6 +109,50 @@ class DatabaseManager:
             self.local_database.install_desc(package_description, installed_explicitly)
 
         return True
+
+    def remove_package(self, package) -> bool:  # noqa: C901
+        files = self.local_database.get_package_files_if_installed(package)
+        if files:
+            for file in files:
+                assert not file.startswith("/")
+                assert not re.match(r"^[A-Z]:\\.*$", file)
+                full_path = os.path.join(self.root_dir, file)
+                if os.path.isfile(full_path):
+                    os.remove(full_path)
+                elif os.path.isdir(full_path):
+                    try:
+                        os.rmdir(full_path)
+                    except OSError:
+                        continue
+                else:
+                    print(f"Could not remove {full_path}, because it does not exist")
+
+            db_directory = self.local_database.get_package_directory_if_installed(
+                package
+            )
+            shutil.rmtree(db_directory)
+            return True
+
+        print(f"The package {package} is not installed")
+        return False
+
+    def update_package(self, package):
+        package_description = self.get_package_desc(package)
+        if not package_description:
+            print(f"Failed to find package {package}")
+            return False
+
+        installed_version = self.local_database.get_package_version_if_installed(
+            package
+        )
+        if installed_version:
+            if package_description.version > installed_version:
+                self.remove_package(package)
+                self.install_package(package)
+            else:
+                print("No update required")
+        else:
+            print("package not installed")
 
     def extract_archive(self, archive: str) -> List[str]:
         files_to_extract = self.get_files_to_extract_from_archive(archive)

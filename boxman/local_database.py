@@ -1,9 +1,11 @@
 import os
 import re
+import shutil
 from typing import List, Optional
 
 from boxman.constants import ALPM_DB_VERSION
 from boxman.desc import Desc
+from boxman.version import Version
 
 
 class LocalDatabase:
@@ -88,3 +90,52 @@ class LocalDatabase:
 
     def get_desc_directory(self, desc: Desc):
         return os.path.join(self.__dir, f"{desc.name}-{desc.version}")
+
+    def get_package_directory_if_installed(self, package: str) -> Optional[str]:
+        for member in os.listdir(self.__dir):
+            if not re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
+                print(f"{member} does not match")
+                continue
+            name, version, rel = member.rsplit("-", 2)
+            if name == package:
+                return os.path.join(self.__dir, member)
+        return None
+
+    def get_package_version_if_installed(self, package: str) -> Optional[Version]:
+        for member in os.listdir(self.__dir):
+            if not re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
+                continue
+            name, version, rel = member.rsplit("-", 2)
+            if name == package:
+                return Version(f"{version}-{rel}")
+        return None
+
+    def get_package_files_if_installed(self, package) -> Optional[List[str]]:
+        directory = self.get_package_directory_if_installed(package)
+        if directory:
+            files = []
+            with open(os.path.join(directory, "files")) as files_file:
+                for file in files_file.read().split("\n"):
+                    if not file or file == "%FILES%":
+                        continue
+                    files.append(file)
+            return files
+        return None
+
+    def remove_package(self, package: str, root_path: str) -> bool:
+        for member in os.listdir(self.__dir):
+            full_path = os.path.join(self.__dir, member)
+            if (
+                os.path.isdir(full_path)
+                and re.match(r"[\w\-._]*-\d[\w.]*-\d+", member)
+                and member.rsplit("-", 2)[0] == package
+            ):
+                with open(os.path.join(full_path, "files")) as files_file:
+                    for relative_file_path in files_file.read().split("\n"):
+                        if not relative_file_path or relative_file_path == "%FILES%":
+                            continue
+                        full_file_path = os.path.join(root_path, relative_file_path)
+                        os.remove(full_file_path)
+                shutil.rmtree(full_path)
+                return True
+        return False

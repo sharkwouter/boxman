@@ -46,7 +46,8 @@ class Boxman:
         pass
 
     def __run_remove(self, packages: List[str]) -> None:
-        pass
+        for package in packages:
+            self.database_manager.remove_package(package)
 
     def __run_search(self, search_string: str) -> None:
         packages = self.database_manager.search_packages(search_string)
