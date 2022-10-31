@@ -107,7 +107,7 @@ sha256
     def test_install_desc(self, mock_isdir: MagicMock):
         mock_isdir.return_value = True
         config = MagicMock()
-        config.db_path = "/test/var/lib/pacman"
+        config.options.db_path = "/test/var/lib/pacman"
         db = LocalDatabase(config)
 
         desc = MagicMock()
@@ -124,7 +124,7 @@ sha256
     ):
         mock_isdir.side_effect = [True, False]
         config = MagicMock()
-        config.db_path = "/test/var/lib/pacman"
+        config.options.db_path = "/test/var/lib/pacman"
         db = LocalDatabase(config)
         mock_makedirs.assert_not_called()
 
