@@ -14,7 +14,7 @@ boxman search package  # Search for packages with a specific string in their nam
 boxman show package  # Print information about a package
 boxman list  # Print a list of available packages
 boxman installed  # Print a list of installed packages
-boxman files  # Print a list of installed files
+boxman file_list  # Print a list of installed file_list
 ```
 
 **Currently only list, search and show work! Install, update, remove and installed do not work!**

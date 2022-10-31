@@ -12,7 +12,7 @@ from boxman.database_manager import DatabaseManager
 def run():
     base_directory = os.path.dirname(os.path.dirname(__main__.__file__))
     config = Config(base_directory)
-    local_database = LocalDatabase(config.options.db_path)
+    local_database = LocalDatabase(config)
     database_manager = DatabaseManager(local_database, config)
 
     args = parse_args()

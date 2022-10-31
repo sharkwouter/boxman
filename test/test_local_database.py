@@ -9,9 +9,11 @@ class TestLocalDatabase(TestCase):
     @patch("os.path.isdir")
     def test_init(self, mock_isdir: MagicMock, mock_makedirs: MagicMock):
         mock_isdir.return_value = True
-        db = LocalDatabase("/home/user/pspdev/var/lib/pacman")
+        config = MagicMock()
+        config.options.db_path = "/home/user/pspdev/var/lib/pacman"
+        db = LocalDatabase(config)
         self.assertEqual(
-            "/home/user/pspdev/var/lib/pacman/local", db._LocalDatabase__dir
+            "/home/user/pspdev/var/lib/pacman/local", db._LocalDatabase__local_directory
         )
         mock_makedirs.assert_not_called()
 
@@ -22,20 +24,25 @@ class TestLocalDatabase(TestCase):
     ):
         mock_isdir.return_value = False
         with patch("builtins.open", mock_open()):
-            LocalDatabase("/home/user/pspdev/var/lib/pacman")
+            config = MagicMock()
+            config.options.db_path = "/home/user/pspdev/var/lib/pacman"
+            LocalDatabase(config)
         mock_makedirs.assert_called_once_with("/home/user/pspdev/var/lib/pacman/local")
 
+    @patch("os.listdir")
     @patch("os.path.isdir")
-    def test_get_desc_directory(self, mock_isdir: MagicMock):
+    def test_get_package_directory(
+        self, mock_isdir: MagicMock, mock_listdir: MagicMock
+    ):
         mock_isdir.return_value = True
-        db = LocalDatabase("/test/var/lib/pacman")
+        config = MagicMock()
+        config.options.db_path = "/test/var/lib/pacman"
+        db = LocalDatabase(config)
 
-        desc = MagicMock()
-        desc.name = "test"
-        desc.version = "1.0.1-1"
+        mock_listdir.return_value = ["test-1.0.1-1"]
 
         self.assertEqual(
-            "/test/var/lib/pacman/local/test-1.0.1-1", db.get_desc_directory(desc)
+            "/test/var/lib/pacman/local/test-1.0.1-1", db.get_package_directory("test")
         )
 
     @patch("os.listdir")
@@ -83,12 +90,14 @@ sha256
 
 
 """
-        db = LocalDatabase("/test/var/lib/pacman")
+        config = MagicMock()
+        config.options.db_path = "/test/var/lib/pacman"
+        db = LocalDatabase(config)
         mock_open_desc_file = MagicMock()
         with patch(
             "builtins.open", mock_open(mock_open_desc_file, read_data=desc_content)
         ):
-            desc = db.get_desc("sdl2")
+            desc = db.get_package_desc("sdl2")
             self.assertEqual(desc_content, repr(desc))
             mock_open_desc_file.assert_called_once_with(
                 "/test/var/lib/pacman/local/sdl2-2.25.0-3/desc", "r"
@@ -97,13 +106,16 @@ sha256
     @patch("os.path.isdir")
     def test_install_desc(self, mock_isdir: MagicMock):
         mock_isdir.return_value = True
-        db = LocalDatabase("/test/var/lib/pacman")
+        config = MagicMock()
+        config.db_path = "/test/var/lib/pacman"
+        db = LocalDatabase(config)
 
         desc = MagicMock()
+        files = MagicMock()
         mock_writer = MagicMock()
         with patch("builtins.open", mock_open(mock_writer)):
-            db.install_desc(desc)
-            mock_writer.assert_called_once()
+            db.install(desc, files)
+            self.assertEqual(mock_writer.call_count, 2)
 
     @patch("os.makedirs")
     @patch("os.path.isdir")
@@ -111,12 +123,15 @@ sha256
         self, mock_isdir: MagicMock, mock_makedirs: MagicMock
     ):
         mock_isdir.side_effect = [True, False]
-        db = LocalDatabase("/test/var/lib/pacman")
+        config = MagicMock()
+        config.db_path = "/test/var/lib/pacman"
+        db = LocalDatabase(config)
         mock_makedirs.assert_not_called()
 
         desc = MagicMock()
+        files = MagicMock()
         mock_writer = MagicMock()
         with patch("builtins.open", mock_open(mock_writer)):
-            db.install_desc(desc)
+            db.install(desc, files)
             mock_makedirs.assert_called_once()
-            mock_writer.assert_called_once()
+            self.assertEqual(mock_writer.call_count, 2)

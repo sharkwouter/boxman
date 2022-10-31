@@ -1,6 +1,4 @@
 import os.path
-import re
-import shutil
 import tarfile
 import urllib.request
 from typing import Optional, List
@@ -10,6 +8,7 @@ from boxman import Config
 from boxman.checksums import checksums_match
 from boxman.database import Database
 from boxman.desc import Desc
+from boxman.files import Files
 from boxman.local_database import LocalDatabase
 from boxman.repository import Repository
 
@@ -84,9 +83,7 @@ class DatabaseManager:
             print(f"Failed to find package {package}")
             return False
 
-        installed_version = self.local_database.get_package_version_if_installed(
-            package
-        )
+        installed_version = self.local_database.get_package_version(package)
         if installed_version:
             if package_description.version > installed_version:
                 self.remove_package(package)
@@ -94,44 +91,30 @@ class DatabaseManager:
                 return True
 
         for dependency in package_description.dependencies:
-            if not self.local_database.get_desc(dependency):
+            if not self.local_database.get_package_desc(dependency):
                 result = self.install_package(dependency, False)
                 if not result:
                     print(f"Failed to install dependency {dependency}")
                     return False
 
-        if not self.local_database.get_desc(package):
+        if not self.local_database.get_package_desc(package):
             downloaded_archive = self.download_package(package_description)
             if not downloaded_archive:
                 return False
             installed_files = self.extract_archive(downloaded_archive)
-            self.local_database.write_files_list(package_description, installed_files)
-            self.local_database.install_desc(package_description, installed_explicitly)
+            self.local_database.install(
+                package_description,
+                Files(self.root_dir, file_list=installed_files),
+                installed_explicitly,
+            )
 
         return True
 
-    def remove_package(self, package) -> bool:  # noqa: C901
-        files = self.local_database.get_package_files_if_installed(package)
+    def remove_package(self, package) -> bool:
+        files = self.local_database.get_package_files(package)
         if files:
-            for file in files:
-                assert not file.startswith("/")
-                assert not re.match(r"^[A-Z]:\\.*$", file)
-                full_path = os.path.join(self.root_dir, file)
-                if os.path.isfile(full_path):
-                    os.remove(full_path)
-                elif os.path.isdir(full_path):
-                    try:
-                        os.rmdir(full_path)
-                    except OSError:
-                        continue
-                else:
-                    print(f"Could not remove {full_path}, because it does not exist")
-
-            db_directory = self.local_database.get_package_directory_if_installed(
-                package
-            )
-            shutil.rmtree(db_directory)
-            return True
+            files.remove_files()
+            return self.local_database.remove_package(package)
 
         print(f"The package {package} is not installed")
         return False
@@ -142,9 +125,7 @@ class DatabaseManager:
             print(f"Failed to find package {package}")
             return False
 
-        installed_version = self.local_database.get_package_version_if_installed(
-            package
-        )
+        installed_version = self.local_database.get_package_version(package)
         if installed_version:
             if package_description.version > installed_version:
                 self.remove_package(package)
@@ -231,4 +212,4 @@ class DatabaseManager:
         print(f"Could not find repository with name {name}")
 
     def get_installed_package_desc(self, package: str) -> Optional[Desc]:
-        return self.local_database.get_desc(package)
+        return self.local_database.get_package_desc(package)
