@@ -50,7 +50,7 @@ class Config:
     def __parse_config_options(self, options_section: SectionProxy) -> None:
         for key in options_section.keys():
             if key == "rootdir":
-                self.options.root_dir = self.get_relative_path(
+                self.options.root_dir = self.get_root_path(
                     options_section.get("rootdir")
                 )
             elif key == "cachedir":
@@ -93,7 +93,8 @@ class Config:
         while path.startswith(("/", "\\")):
             path = path[1:]
 
-        return os.path.join(self.base_directory, path)
+        assert self.options.root_dir
+        return os.path.join(self.options.root_dir, path)
 
     def get_root_path(self, path: str) -> str:
         """
@@ -106,7 +107,11 @@ class Config:
         path_with_variables = os.path.expandvars(path)
         assert "$" not in path_with_variables
         full_path = os.path.join(self.base_directory, path_with_variables)
-        assert full_path != os.sep and not re.match("^[A-Za-z]:\\$", full_path)
+        assert (
+            full_path
+            and full_path != os.sep
+            and not re.match("^[A-Za-z]:\\$", full_path)
+        )
         return full_path
 
     @property

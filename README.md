@@ -27,9 +27,9 @@ Boxman expects the configuration to be in `etc/boxman.conf` (relative where it's
 Example for the PSPDEV repository:
 ```ini
 [options]
-RootDir     = psp
+RootDir     = $PSPDEV
 DBPath      = var/lib/pacman
-CacheDir    = var/cache/pacman/pkg
+CacheDir    = var/cache/pacman
 
 [pspdev]
 Server = https://github.com/pspdev/psp-packages/releases/latest/download/

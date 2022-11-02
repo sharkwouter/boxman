@@ -25,7 +25,7 @@ class DatabaseManager:
         self.databases = []
         for repository in config.repositories:
             self.databases.append(Database(repository, refresh_after))
-        self.download_directory = config.options.cache_dir
+        self.download_directory = os.path.join(config.options.cache_dir, "pkg")
         self.root_dir = config.options.root_dir
 
     def get_package_list(self, repository: str):
