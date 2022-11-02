@@ -107,7 +107,12 @@ class TestConfig(TestCase):
             "Server = https://github.com/sharkwouter/arch-repo-test/releases/latest/download\n"
         )
         with patch("builtins.open", mock_open(read_data=data)):
-            self.assertRaises(AssertionError, Config, "/base/dir")
+            self.assertRaisesRegex(
+                Exception,
+                r"Could not expand .* because an environment variable is not set",
+                Config,
+                "/base/dir",
+            )
 
     @patch("os.path.isfile")
     def test_init_defaults(self, mock_isfile: MagicMock):

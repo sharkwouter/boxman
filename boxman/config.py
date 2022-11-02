@@ -103,10 +103,12 @@ class Config:
         :param path: The path which needs to be sanitized
         :return: full path inside the base directory
         """
-        path = os.path.expanduser(path)
-        path_with_variables = os.path.expandvars(path)
-        assert "$" not in path_with_variables
-        full_path = os.path.join(self.base_directory, path_with_variables)
+        path = os.path.expanduser(os.path.expandvars(path))
+        if "$" in path:
+            raise Exception(
+                f"Could not expand {path} because an environment variable is not set"
+            )
+        full_path = os.path.join(self.base_directory, path)
         assert (
             full_path
             and full_path != os.sep
