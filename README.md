@@ -2,6 +2,8 @@
 
 Boxman is a WIP package manager compatible with pacman repositories which works with relative paths. Install Boxman into your project and it will be able to manage packages for you there and only there. It made for managing libraries in development kits.
 
+**Note: Boxman is still very much WIP! Use at your own risk!**
+
 ## Usage
 
 Boxman supports the following commands:
@@ -14,10 +16,9 @@ boxman search package  # Search for packages with a specific string in their nam
 boxman show package  # Print information about a package
 boxman list  # Print a list of available packages
 boxman installed  # Print a list of installed packages
-boxman file_list  # Print a list of installed file_list
+boxman files  # Print a list of installed file_list
+boxman config  # Print the configuration
 ```
-
-**Currently only list, search and show work! Install, update, remove and installed do not work!**
 
 ## Configuration
 
