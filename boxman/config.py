@@ -22,9 +22,7 @@ class Config:
 
     def __set_options_defaults(self) -> None:
         root_dir = self.base_directory
-        cache_dir = os.path.join(
-            self.base_directory, "var", "cache", APPLICATION_NAME, "pkg"
-        )
+        cache_dir = os.path.join(self.base_directory, "var", "cache", APPLICATION_NAME)
         db_path = os.path.join(self.base_directory, "var", "lib", APPLICATION_NAME)
         self.options = Options(root_dir=root_dir, cache_dir=cache_dir, db_path=db_path)
 

@@ -121,7 +121,7 @@ class TestConfig(TestCase):
             config = Config("/base/dir")
 
         self.assertEqual("/base/dir", config.base_directory)
-        self.assertEqual("/base/dir/var/cache/boxman/pkg", config.options.cache_dir)
+        self.assertEqual("/base/dir/var/cache/boxman", config.options.cache_dir)
         self.assertEqual("/base/dir/var/lib/boxman", config.options.db_path)
         self.assertEqual("/base/dir", config.options.root_dir)
         self.assertEqual(0, len(config.repositories))
