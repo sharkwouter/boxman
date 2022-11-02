@@ -39,7 +39,7 @@ class Files:
     def get_files(self):
         result = []
         for file in self.__files:
-            full_path = self._safe_path_join(self.__root_directory, file)
+            full_path = self.get_full_path(file)
             result.append(full_path)
         return result
 
@@ -57,17 +57,13 @@ class Files:
             else:
                 print(f"Could not delete not existing file: {file}")
 
-    def _safe_path_join(self, *paths: str):
-        path_list = list(paths)
-        for i in range(len(path_list)):
-            if ".." in path_list[i]:
-                path_list[i] = path_list[i].replace("..", "")
-            if i == 0:
-                continue
+    def get_full_path(self, path: str):
+        if ".." in path:
+            path = path.replace("..", "")
 
-            while path_list[i].startswith("/"):
-                path_list[i] = path_list[i][1:]
-            while re.match(r"^[A-Za-z]:\\", path_list[i]):
-                path_list[i] = path_list[i][3:]
+        while path.startswith("/"):
+            path = path[1:]
+        while re.match(r"^[A-Za-z]:\\", path):
+            path = path[3:]
 
-        return os.path.join(*path_list)
+        return os.path.join(self.__root_directory, path)

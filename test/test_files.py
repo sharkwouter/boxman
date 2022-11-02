@@ -71,12 +71,12 @@ class TestFiles(TestCase):
 
         self.assertEqual(expected, actual)
 
-    def test_safe_path_join(self):
+    def test_get_full_path(self):
         files = Files("/home/test/root", file_list=["test"])
 
         self.assertEqual(
             "/home/test/root/test",
-            files._safe_path_join("/home", "test", "root", "test"),
+            files.get_full_path("test"),
         )
 
     def test_repr(self):
