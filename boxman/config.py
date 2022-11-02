@@ -1,8 +1,11 @@
+import logging
 import os.path
 import re
 import sys
 from configparser import ConfigParser, SectionProxy
 from typing import List
+
+import __main__
 
 from boxman.constants import APPLICATION_NAME
 from boxman.data.options import Options
@@ -13,10 +16,12 @@ class Config:
     options: Options
     repositories: List[Repository]
     __base_directory: str
+    __config_path: str
 
-    def __init__(self, base_directory: str) -> None:
-        self.__base_directory = base_directory
+    def __init__(self) -> None:
         self.repositories = []
+        self.__config_path = self.get_config_path()
+        self.__base_directory = self.get_base_directory()
         self.__set_options_defaults()
         self.__parse_config()
 
@@ -31,19 +36,50 @@ class Config:
             allow_no_value=True,
             comment_prefixes=["#"],
         )
-        config_file = os.path.join(
-            self.base_directory, "etc", f"{APPLICATION_NAME}.conf"
-        )
-        if os.path.isfile(config_file):
-            parser.read(config_file)
-        else:
-            sys.exit(f"Configuration file {config_file} not found")
+        parser.read(self.config_path)
 
         for section in parser.sections():
             if section == "options":
                 self.__parse_config_options(parser["options"])
             else:
                 self.__parse_config_repository(parser[section])
+
+    def get_config_path(self) -> str:
+        start_directory = os.path.dirname(__main__.__file__)
+        possible_config_locations = [
+            start_directory,
+            os.path.join(start_directory, "etc"),
+            os.path.join(os.path.dirname(start_directory), "etc"),
+            os.getcwd(),
+            os.path.join(os.getcwd(), "etc"),
+        ]
+        possible_config_names = [
+            os.path.basename(__main__.__file__),
+            "boxman",
+            "pacman",
+        ]
+        for location in possible_config_locations:
+            for name in possible_config_names:
+                config_path = os.path.join(location, f"{name}.conf")
+                if os.path.isfile(config_path):
+                    logging.debug(f"config file found at: {config_path}")
+                    return config_path
+                else:
+                    logging.debug(f"no config file found at: {config_path}")
+
+        sys.exit("No configuration file was found")
+
+    def get_base_directory(self) -> str:
+        start_directory = os.path.dirname(__main__.__file__)
+        config_directory = os.path.dirname(self.config_path)
+        if start_directory == config_directory:
+            return start_directory
+        elif os.path.basename(config_directory) == "etc":
+            return os.path.dirname(config_directory)
+        elif os.path.basename(start_directory) == "bin":
+            return os.path.dirname(start_directory)
+        else:
+            return os.getcwd()
 
     def __parse_config_options(self, options_section: SectionProxy) -> None:
         for key in options_section.keys():
@@ -117,3 +153,7 @@ class Config:
     @property
     def base_directory(self) -> str:
         return self.__base_directory
+
+    @property
+    def config_path(self) -> str:
+        return self.__config_path
