@@ -95,6 +95,20 @@ class Config:
 
         return os.path.join(self.base_directory, path)
 
+    def get_root_path(self, path: str) -> str:
+        """
+        Takes the root path string and returns the full path
+        This can be relative to the base directory or absolute
+        :param path: The path which needs to be sanitized
+        :return: full path inside the base directory
+        """
+        path = os.path.expanduser(path)
+        path_with_variables = os.path.expandvars(path)
+        assert "$" not in path_with_variables
+        full_path = os.path.join(self.base_directory, path_with_variables)
+        assert full_path != os.sep and not re.match("^[A-Za-z]:\\$", full_path)
+        return full_path
+
     @property
     def base_directory(self) -> str:
         return self.__base_directory

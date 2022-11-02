@@ -28,6 +28,8 @@ class Boxman:
             self.__run_installed()
         elif args.mode == Mode.FILES:
             self.__run_files(args.arguments[0])
+        elif args.mode == Mode.CONFIG:
+            self.__run_config()
         elif args.mode == Mode.NOT_SET:
             raise ValueError("Mode was not set")
 
@@ -84,3 +86,11 @@ class Boxman:
         else:
             print(f"package {package} not found")
             exit(1)
+
+    def __run_config(self):
+        print(f"Root directory           : {self.config.options.root_dir}")
+        print(f"Cache directory          : {self.config.options.cache_dir}")
+        print(f"Local database directory : {self.config.options.db_path}")
+        print("Repositories             :")
+        for repository in self.config.repositories:
+            print(f"- {repository.name}: {repository.url.rsplit('/',1)[0]}")

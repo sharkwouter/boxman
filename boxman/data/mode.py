@@ -10,4 +10,5 @@ class Mode(Enum):
     REMOVE = auto()
     SHOW = auto()
     UPDATE = auto()
+    CONFIG = auto()
     NOT_SET = auto()

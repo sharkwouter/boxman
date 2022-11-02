@@ -37,6 +37,10 @@ def add_installed_parser(subparser: _SubParsersAction) -> None:
     subparser.add_parser(name="installed", help="List all installed packages")
 
 
+def add_config_parser(subparser: _SubParsersAction) -> None:
+    subparser.add_parser(name="config", help="Show the configuration")
+
+
 def add_remove_parser(subparser: _SubParsersAction) -> None:
     parser = subparser.add_parser(name="remove", help="Remove the installed packages")
 
@@ -125,6 +129,7 @@ def parse_args(args_list: Optional[List[str]] = None) -> ParsedArguments:
     add_list_parser(subparser)
     add_search_parser(subparser)
     add_installed_parser(subparser)
+    add_config_parser(subparser)
     add_remove_parser(subparser)
     add_show_parser(subparser)
     add_files_parser(subparser)
