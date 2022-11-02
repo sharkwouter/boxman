@@ -64,15 +64,15 @@ def add_show_parser(subparser: _SubParsersAction) -> None:
 
 def add_files_parser(subparser: _SubParsersAction) -> None:
     parser = subparser.add_parser(
-        name="file_list", help="List installed file_list per package"
+        name="files", help="List installed file_list per package"
     )
 
     parser.add_argument(
         "package",
         nargs="?",
         type=str,
-        help="Package to show installed file_list for",
-        default="",
+        help="Package to show installed files for",
+        default=None,
     )
 
 

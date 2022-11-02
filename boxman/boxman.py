@@ -68,12 +68,19 @@ class Boxman:
             print(package)
 
     def __run_installed(self) -> None:
-        print("\n".join(self.database_manager.get_installed_list()))
+        package_directories = self.database_manager.get_installed_list()
+        package_directories.sort()
+        for package in package_directories:
+            name, version, rel = package.rsplit("-", 2)
+            print(f"{name} {version}-{rel}")
 
     def __run_files(self, package: str) -> None:
         result = self.database_manager.show_files(package)
         if result:
-            print("\n".join(result))
+            result.sort()
+            for files in result:
+                for file in files.get_files():
+                    print(f"{files.package} {file}")
         else:
             print(f"package {package} not found")
             exit(1)

@@ -24,96 +24,92 @@ class LocalDatabase:
             ) as db_version_file:
                 db_version_file.write(ALPM_DB_VERSION)
 
-    def get_package_list(self) -> List[str]:
+    def get_installed_packages(self) -> List[str]:
         packages = []
-        for member in os.listdir(self.__local_directory):
-            full_path = os.path.join(self.__local_directory, member)
-            if os.path.isdir(full_path):
-                package = self.__directory_to_package_list_entry(member)
-                packages.append(package)
-        packages.sort()
+        for package_directory in self.get_package_directories():
+            packages.append(package_directory.rsplit("-", 2)[0])
         return packages
 
-    def __directory_to_package_list_entry(self, name: str) -> str:
-        if re.match(r"[\w\-_]+ [\d\-.]+]", name):
-            return name
-        package_name, package_version, package_rel = name.rsplit("-", 2)
-        return f"{package_name} {package_version}-{package_rel}"
+    def get_installed_files(
+        self, package: Optional[str] = None
+    ) -> Optional[List[Files]]:
+        if package:
+            return [self.get_package_files(package)]
 
-    def get_installed_files(self, package: str) -> List[str]:
         files = []
-        installed = os.listdir(self.__local_directory)
-        installed.sort()
-        for member in installed:
-            directory = os.path.join(self.__local_directory, member)
-            if os.path.isdir(directory):
-                files_path = os.path.join(directory, "file_list")
-                if not os.path.isfile(files_path):
-                    continue
-                with open(files_path, "r") as file:
-                    for line in file.read().split("\n"):
-                        if not line or line == "%FILES%":
-                            continue
-                        files.append(f"{member.rsplit('-', 2)[0]} {line}")
+        for package in self.get_installed_packages():
+            files.append(self.get_package_files(package))
+
         return files
 
     def get_desc_list(self) -> List[Desc]:
         result = []
-        for member in os.listdir(self.__local_directory):
-            if re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
-                full_path = os.path.join(self.__local_directory, member, "desc")
-                with open(full_path, "r") as desc_file:
-                    result.append(Desc(desc_file.read(), "local"))
+        for member in self.get_package_directories():
+            full_path = os.path.join(self.__local_directory, member, "desc")
+            with open(full_path, "r") as desc_file:
+                result.append(Desc(desc_file.read(), "local"))
         return result
 
-    def get_package_directory(self, package: str) -> Optional[str]:
+    def get_package_directories(self) -> List[str]:
+        package_directories = []
         for member in os.listdir(self.__local_directory):
-            if not re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
-                print(f"{member} does not match")
-                continue
-            name, version, rel = member.rsplit("-", 2)
-            if name == package:
-                return os.path.join(self.__local_directory, member)
+            if os.path.isdir(os.path.join(self.__local_directory, member)) and re.match(
+                r"[\w\-._]+-[\w.]+-\d+", member
+            ):
+                package_directories.append(member)
+
+        return package_directories
+
+    def get_package_directory(self, package: str) -> Optional[str]:
+        for member in self.get_package_directories():
+            if re.match(rf"^{package}-[\w.]+-\d+$", member):
+                return member
         return None
 
     def get_package_version(self, package: str) -> Optional[Version]:
-        for member in os.listdir(self.__local_directory):
-            if not re.match(r"[\w\-._]*-\d[\w.]*-\d+", member):
-                continue
-            name, version, rel = member.rsplit("-", 2)
+        package_directory = self.get_package_directory(package)
+        if package_directory:
+            name, version, rel = package_directory.rsplit("-", 2)
             if name == package:
                 return Version(f"{version}-{rel}")
         return None
 
     def get_package_desc(self, package: str) -> Optional[Desc]:
-        for member in os.listdir(self.__local_directory):
-            if re.match(rf"^{package}-\d[\w.]*-\d+", member):
-                full_path = os.path.join(self.__local_directory, member, "desc")
-                with open(full_path, "r") as desc_file:
-                    return Desc(desc_file.read(), "local")
+        package_directory = self.get_package_directory(package)
+        if package_directory:
+            full_path = os.path.join(self.__local_directory, package_directory, "desc")
+            with open(full_path, "r") as desc_file:
+                return Desc(desc_file.read(), "local")
 
     def get_package_files(self, package) -> Optional[Files]:
-        directory = self.get_package_directory(package)
-        if directory:
-            with open(os.path.join(directory, "files")) as files_file:
-                return Files(self.config.options.root_dir, files_file.read())
+        package_directory = self.get_package_directory(package)
+        if package_directory:
+            files_path = os.path.join(
+                self.__local_directory, package_directory, "files"
+            )
+            with open(files_path) as files_file:
+                return Files(
+                    package, self.config.options.root_dir, content=files_file.read()
+                )
         return None
 
     def remove_package(self, package: str) -> bool:
-        directory = self.get_package_directory(package)
-        if directory:
-            shutil.rmtree(directory)
+        package_directory = self.get_package_directory(package)
+        if package_directory:
+            shutil.rmtree(package_directory)
             return True
         return False
 
     def install(
         self, desc: Desc, files: Files, installed_explicitly: bool = True
     ) -> None:
-        directory = os.path.join(self.__local_directory, f"{desc.name}-{desc.version}")
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
+        package_directory = os.path.join(
+            self.__local_directory, f"{desc.name}-{desc.version}"
+        )
+        if not os.path.isdir(package_directory):
+            os.makedirs(package_directory)
         desc.convert_to_local(installed_explicitly)
-        with open(os.path.join(directory, "desc"), "w") as desc_file:
+        with open(os.path.join(package_directory, "desc"), "w") as desc_file:
             desc_file.write(repr(desc))
-        with open(os.path.join(directory, "files"), "w") as files_file:
+        with open(os.path.join(package_directory, "files"), "w") as files_file:
             files_file.write(repr(files))

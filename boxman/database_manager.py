@@ -45,7 +45,7 @@ class DatabaseManager:
         return packages
 
     def get_installed_list(self):
-        return self.local_database.get_package_list()
+        return self.local_database.get_package_directories()
 
     def search_packages(self, search_string: str):
         packages = []
@@ -66,14 +66,7 @@ class DatabaseManager:
             return result
 
     def show_files(self, package: str):
-        result = self.local_database.get_installed_files(package)
-        for i in range(len(result)):
-            package, path = result[i].split(" ")
-            full_path = os.path.join(self.root_dir, path)
-            if os.path.isdir(full_path):
-                full_path += os.sep
-            result[i] = f"{package} {full_path}"
-        return result
+        return self.local_database.get_installed_files(package)
 
     def install_package(  # noqa: C901
         self, package: str, installed_explicitly=True
@@ -104,7 +97,7 @@ class DatabaseManager:
             installed_files = self.extract_archive(downloaded_archive)
             self.local_database.install(
                 package_description,
-                Files(self.root_dir, file_list=installed_files),
+                Files(package, self.root_dir, file_list=installed_files),
                 installed_explicitly,
             )
 

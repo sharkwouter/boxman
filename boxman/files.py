@@ -6,9 +6,11 @@ from typing import List, Optional
 class Files:
     __files: List[str]
     __root_directory: str
+    package: str
 
     def __init__(
         self,
+        package: str,
         root_directory: str,
         content: Optional[str] = None,
         file_list: Optional[List[str]] = None,
@@ -16,10 +18,12 @@ class Files:
         """
         Manages files in the root and represents the files file in the local database
         Either content of files has to be set
+        :param package: name of the package this file list belongs to
         :param root_directory: root directory to which files are installed
         :param content: content of the files file
         :param file_list: list of files
         """
+        self.package = package
         self.__root_directory = root_directory
         if content:
             self.__files = []
@@ -67,3 +71,9 @@ class Files:
             path = path[3:]
 
         return os.path.join(self.__root_directory, path)
+
+    def __lt__(self, other):
+        return self.package < other.package
+
+    def __gt__(self, other):
+        return self.package > other.package

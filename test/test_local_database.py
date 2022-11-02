@@ -41,9 +41,7 @@ class TestLocalDatabase(TestCase):
 
         mock_listdir.return_value = ["test-1.0.1-1"]
 
-        self.assertEqual(
-            "/test/var/lib/pacman/local/test-1.0.1-1", db.get_package_directory("test")
-        )
+        self.assertEqual("test-1.0.1-1", db.get_package_directory("test"))
 
     @patch("os.listdir")
     @patch("os.path.isdir")
@@ -135,3 +133,36 @@ sha256
             db.install(desc, files)
             mock_makedirs.assert_called_once()
             self.assertEqual(mock_writer.call_count, 2)
+
+    @patch("os.listdir")
+    @patch("os.path.isdir")
+    def test_get_package_directories(
+        self, mock_isdir: MagicMock, mock_listdir: MagicMock
+    ):
+        mock_isdir.return_value = True
+        config = MagicMock()
+        config.options.db_path = "/home/user/pspdev/var/lib/pacman"
+        db = LocalDatabase(config)
+
+        mock_listdir.return_value = [
+            "libpspvram-r11.885fd3f-1",
+            "pspgl-r12-1",
+            "pspirkeyb-r1-1",
+            "sdl-1.2.15-1",
+            "sdl2-2.25.0-3",
+            "does-not-match",
+            "somefile",
+            "this-is-a-test",
+        ]
+
+        expected = [
+            "libpspvram-r11.885fd3f-1",
+            "pspgl-r12-1",
+            "pspirkeyb-r1-1",
+            "sdl-1.2.15-1",
+            "sdl2-2.25.0-3",
+        ]
+
+        actual = db.get_package_directories()
+
+        self.assertEqual(expected, actual)
