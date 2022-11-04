@@ -1,0 +1,8 @@
+[run]
+branch = True
+source = boxman
+
+[report]
+skip_covered = True
+skip_empty = True
+show_missing = True

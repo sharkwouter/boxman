@@ -25,7 +25,10 @@ jobs:
         flake8
     - name: Run tests
       run: |
-        echo "**Coverage report**:"
+        python3 -m coverage run -m unittest discover -bv --locals test
+    - name: Generate coverage report
+      run: |
+        echo "**Coverage report**:" >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
-        python3 -m coverage run --source boxman --branch -m unittest discover -bv --locals test && python3 -m coverage report -m --skip-covered --skip-empty >> $GITHUB_STEP_SUMMARY
+        python -m coverage report >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
