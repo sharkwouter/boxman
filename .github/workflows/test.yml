@@ -25,4 +25,7 @@ jobs:
         flake8
     - name: Run tests
       run: |
-        python3 -m coverage run --source boxman -m unittest discover -bv --locals test && python3 -m coverage report -m >> $GITHUB_STEP_SUMMARY
+        echo "**Coverage report**:"
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        python3 -m coverage run --source boxman --branch -m unittest discover -bv --locals test && python3 -m coverage report -m --skip-covered --skip-empty >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
