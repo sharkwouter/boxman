@@ -10,6 +10,6 @@ repos:
     hooks:
     -   id: flake8
 -   repo: https://github.com/sharkwouter/python-unittest
-    rev: 1.0.0
+    rev: 1.0.1
     hooks:
     -   id: python-unittest
