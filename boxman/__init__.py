@@ -1,5 +1,3 @@
-import os
-
 from boxman.config import Config
 from boxman.args_parser import parse_args
 from boxman.boxman import Boxman
@@ -15,7 +13,3 @@ def run():
     args = parse_args()
     boxman = Boxman(config, database_manager)
     boxman.run(args)
-
-
-if __name__ == "__main__":
-    run()
