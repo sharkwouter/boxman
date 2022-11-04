@@ -1,3 +1,4 @@
+import sys
 from argparse import ArgumentParser, _SubParsersAction, Namespace
 from typing import List, Optional
 
@@ -113,9 +114,16 @@ def get_argument_list_from_args(args: Namespace, mode: Mode):
     return arguments
 
 
+def get_program_name():
+    if not sys.argv[0].endswith("__main__.py"):
+        return sys.argv[0]
+    return "python3 -m boxman"
+
+
 def parse_args(args_list: Optional[List[str]] = None) -> ParsedArguments:
     parser = ArgumentParser(
-        description="A pacman compatible package manager which works with relative paths."
+        description="A pacman compatible package manager which works with relative paths.",
+        prog=get_program_name(),
     )
 
     subparser = parser.add_subparsers(
