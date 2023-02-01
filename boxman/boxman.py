@@ -45,7 +45,9 @@ class Boxman:
             exit(1)
 
     def __run_update(self, packages: List[str]) -> None:
-        pass
+        success = self.database_manager.update_packages(packages)
+        if not success:
+            exit(1)
 
     def __run_remove(self, packages: List[str]) -> None:
         for package in packages:

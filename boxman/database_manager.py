@@ -110,10 +110,15 @@ class DatabaseManager:
             files.remove_files()
             return self.local_database.remove_package(package)
 
-        print(f"The package {package} is not installed")
+        print(f"The package {package} is not installed and could not be removed")
         return False
 
-    def update_package(self, package):
+    def update_package(self, package) -> bool:
+        """
+        Update a package that is already installed
+        :param package: The name of the package
+        :return: True if the update was successful or not needed, False if failed
+        """
         package_description = self.get_package_desc(package)
         if not package_description:
             print(f"Failed to find package {package}")
@@ -122,12 +127,31 @@ class DatabaseManager:
         installed_version = self.local_database.get_package_version(package)
         if installed_version:
             if package_description.version > installed_version:
-                self.remove_package(package)
-                self.install_package(package)
+                if self.remove_package(package):
+                    return self.install_package(package)
+                else:
+                    return False
             else:
-                print("No update required")
+                print(f"No update required for package {package}")
+                return True
         else:
             print("package not installed")
+            return False
+
+    def update_packages(self, packages: List[str]) -> bool:
+        if not packages:
+            packages = self.get_packages_with_updates_available()
+
+        if not packages:
+            print("All packages are up to date")
+            return True
+
+        print(f"Updating packages: {', '.join(packages)}")
+        for package in packages:
+            if not self.update_package(package):
+                print(f"Package {package} failed to update, aborting")
+                return False
+        return True
 
     def extract_archive(self, archive: str) -> List[str]:
         files_to_extract = self.get_files_to_extract_from_archive(archive)
@@ -207,3 +231,15 @@ class DatabaseManager:
 
     def get_installed_package_desc(self, package: str) -> Optional[Desc]:
         return self.local_database.get_package_desc(package)
+
+    def get_packages_with_updates_available(self) -> List[str]:
+        packages = self.local_database.get_installed_packages()
+
+        packages_with_updates = []
+        for package in packages:
+            installed_version = self.local_database.get_package_version(package)
+            available_version = self.get_package_desc(package).version
+            if available_version > installed_version:
+                packages_with_updates.append(package)
+
+        return packages_with_updates
