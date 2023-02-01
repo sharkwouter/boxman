@@ -81,6 +81,7 @@ class DatabaseManager:
             if package_description.version > installed_version:
                 self.remove_package(package)
             else:
+                print(f"Package {package} is already installed, skipping")
                 return True
 
         for dependency in package_description.dependencies:
